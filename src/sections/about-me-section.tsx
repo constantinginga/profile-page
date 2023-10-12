@@ -8,7 +8,7 @@ const AboutMeSection = () => {
     setAboutMe(event.currentTarget.value);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!aboutMe || !aboutMe.trim()) return;
@@ -16,6 +16,18 @@ const AboutMeSection = () => {
     setLoading(true);
 
     // fetch to API
+    const response = await fetch(
+      'https://localhost:7297/Profiles/SetProfileDescription?memberId=1719',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: aboutMe,
+      }
+    ).then((response) => response.json());
+
+    console.log(response);
 
     setAboutMe('');
     setLoading(false);
