@@ -17,12 +17,9 @@ const AboutMeSection = () => {
 
     // fetch to API
     const response = await fetch(
-      'https://localhost:7297/Profiles/SetProfileDescription?memberId=1719',
+      'https://localhost:7297/Profiles/SetProfileDescription?memberId=1731',
       {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: aboutMe,
       }
     ).then((response) => response.json());
