@@ -1,7 +1,9 @@
+import AboutMeSection from './sections/about-me-section';
+
 function App() {
   return (
     <>
-      <div className="btn">Test</div>
+      <AboutMeSection />
     </>
   );
 }
