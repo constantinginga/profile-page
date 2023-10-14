@@ -1,4 +1,6 @@
 import { FormEvent, useState } from 'react';
+import { DescriptionObject } from '../types/descriptionObject';
+import { ProfileResponse } from '../types/profileResponse';
 
 const AboutMeSection = () => {
   const [aboutMe, setAboutMe] = useState('');
@@ -14,13 +16,19 @@ const AboutMeSection = () => {
     if (!aboutMe || !aboutMe.trim()) return;
 
     setLoading(true);
-
+    const descriptionObject: DescriptionObject = {
+      MemberId: 1731,
+      Description: aboutMe,
+    };
     // fetch to API
-    const response = await fetch(
-      'https://localhost:7297/Profiles/SetProfileDescription?memberId=1731',
+    const response: ProfileResponse = await fetch(
+      'https://localhost:7297/Profiles/SetProfileDescription',
       {
         method: 'POST',
-        body: aboutMe,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(descriptionObject),
       }
     ).then((response) => response.json());
 
