@@ -1,10 +1,11 @@
-import AboutMeSection from './sections/about-me-section';
+import Profile from './pages/profile';
+import { UserProvider } from './context/UserContext';
 
 function App() {
   return (
-    <>
-      <AboutMeSection />
-    </>
+    <UserProvider>
+      <Profile />
+    </UserProvider>
   );
 }
 
