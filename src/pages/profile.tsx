@@ -8,7 +8,7 @@ import BasicInfoSection from '../sections/basic-info-section';
 import HelpSection from '../sections/help-section';
 
 import { UserData } from '../types/userData';
-import { ProfileResponse } from '../types/profileResponse';
+// import { ProfileResponse } from '../types/profileResponse';
 import ContactSection from '../sections/contact-section';
 import WorkExperienceSection from '../sections/work-experience-section';
 
@@ -56,13 +56,10 @@ const Profile = () => {
       <Title />
       {updatedUser && (
         <div className="flex flex-col gap-6">
-          <BasicInfoSection name={updatedUser.name} />
-          <AboutMeSection aboutMe={updatedUser.aboutMe} />
-          <HelpSection help={updatedUser.help} />
-          <ContactSection
-            contactEmail={updatedUser.contactEmail}
-            phone={updatedUser.phone}
-          />
+          <BasicInfoSection />
+          <AboutMeSection />
+          <HelpSection />
+          <ContactSection />
           <WorkExperienceSection />
           <PrimaryButton type="submit" loading={loading} onClick={handleSubmit}>
             Save changes

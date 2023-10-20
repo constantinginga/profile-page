@@ -1,15 +1,22 @@
-import { FC, useState } from 'react';
+import { useEffect, useContext, useState } from 'react';
+import { UserContext } from '../context/UserContext';
 
-type ContactSectionProps = {
-  contactEmail: string | null;
-  phone: string | null;
-};
+const ContactSection = () => {
+  const { user } = useContext(UserContext);
 
-const ContactSection: FC<ContactSectionProps> = ({ contactEmail, phone }) => {
-  const [updatedContactEmail, setUpdatedContactEmail] = useState(
-    contactEmail || ''
-  );
-  const [updatedPhone, setUpdatedPhone] = useState(phone || '');
+  useEffect(() => {
+    if (!user) return;
+
+    setUpdatedPhone(
+      user.ContactsSection ? user.ContactsSection.PhoneNumber : ''
+    );
+    setUpdatedContactEmail(
+      user.ContactsSection ? user.ContactsSection.Email : ''
+    );
+  }, [user]);
+
+  const [updatedContactEmail, setUpdatedContactEmail] = useState('');
+  const [updatedPhone, setUpdatedPhone] = useState('');
 
   const handleEmailChange = (event: React.FormEvent<HTMLInputElement>) => {
     setUpdatedContactEmail(event.currentTarget.value);
@@ -20,8 +27,8 @@ const ContactSection: FC<ContactSectionProps> = ({ contactEmail, phone }) => {
   };
 
   return (
-    <section className="flex flex-col gap-1">
-      <h2>Contact information</h2>
+    <section className="flex flex-col gap-4">
+      <h2 className="font-bold text-lg">Contact information</h2>
       <div className="flex flex-col gap-2">
         <input
           type="text"
