@@ -7,6 +7,7 @@ export type UserData = {
   ContactsSection: ContactsSection;
   ServicesSection: ServicesSection;
   WorkExperienceSection: WorkExperienceSection;
+  ExternalLinksSection: ExternalLinksSection;
 };
 
 type DescriptionSection = {
@@ -37,4 +38,17 @@ export type WorkExperience = {
   CompanyName: string;
   Position: string;
   PositionDescription: string;
+};
+
+type ExternalLinksSection = {
+  MemberId: number;
+  PrivacySetting: boolean;
+  ExternalLinks: ExternalLink[];
+};
+
+export type ExternalLink = {
+  ExternalLinkId: number;
+  MemberId: number;
+  Title: string;
+  Url: string;
 };

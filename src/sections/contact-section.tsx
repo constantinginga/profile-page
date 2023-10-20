@@ -27,7 +27,7 @@ const ContactSection = () => {
   };
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex flex-col gap-4 flex-1">
       <h2 className="font-bold text-lg">Contact information</h2>
       <div className="flex flex-col gap-2">
         <input

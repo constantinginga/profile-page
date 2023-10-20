@@ -11,6 +11,7 @@ import { UserData } from '../types/userData';
 // import { ProfileResponse } from '../types/profileResponse';
 import ContactSection from '../sections/contact-section';
 import WorkExperienceSection from '../sections/work-experience-section';
+import ExternalLinksSection from '../sections/external-links-section';
 
 const Profile = () => {
   const [loading, setLoading] = useState(false);
@@ -59,7 +60,10 @@ const Profile = () => {
           <BasicInfoSection />
           <AboutMeSection />
           <HelpSection />
-          <ContactSection />
+          <div className="flex gap-8">
+            <ContactSection />
+            <ExternalLinksSection />
+          </div>
           <WorkExperienceSection />
           <PrimaryButton type="submit" loading={loading} onClick={handleSubmit}>
             Save changes
