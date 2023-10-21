@@ -1,68 +1,112 @@
 import { useEffect, useState, useContext } from 'react';
 import { UserContext } from '../context/UserContext';
+import { Toaster, toast } from 'react-hot-toast';
+
+import { ResponseType } from '../types/responseType';
 
 import PrimaryButton from '../components/primary-button';
 import AboutMeSection from '../sections/about-me-section';
 import Title from '../components/title';
 import BasicInfoSection from '../sections/basic-info-section';
 import HelpSection from '../sections/help-section';
-
-import { UserData } from '../types/userData';
-// import { ProfileResponse } from '../types/profileResponse';
 import ContactSection from '../sections/contact-section';
 import WorkExperienceSection from '../sections/work-experience-section';
-import ExternalLinksSection from '../sections/external-links-section';
+// import ExternalLinksSection from '../sections/external-links-section';
 
 const Profile = () => {
   const [loading, setLoading] = useState(false);
-
   const { user } = useContext(UserContext);
 
-  const [updatedUser, setUpdatedUser] = useState<UserData | null>(user);
+  const [name, setName] = useState('');
+  const [aboutMe, setAboutMe] = useState('');
+  const [services, setServices] = useState('');
+  const [phone, setPhone] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
 
   useEffect(() => {
-    setUpdatedUser(user);
+    if (!user) return;
+
+    setName(user.Name ? user.Name : '');
+    setAboutMe(user.DescriptionSection ? user.DescriptionSection.Content : '');
+    setServices(user.ServicesSection ? user.ServicesSection.Content : '');
+    setPhone(user.ContactsSection ? user.ContactsSection.PhoneNumber : '');
+    setContactEmail(user.ContactsSection ? user.ContactsSection.Email : '');
   }, [user]);
 
   const handleSubmit = async () => {
-    // THIS NEEDS TO BE UPDATED
+    setLoading(true);
 
-    // if (!aboutMe || !aboutMe.trim()) return;
+    if (!user) return;
 
-    // setLoading(true);
-    // const descriptionObject: DescriptionObject = {
-    //   MemberId: 1731,
-    //   Description: aboutMe,
-    // };
-    // fetch to API
-    // const response: ProfileResponse = await fetch(
-    //   'https://localhost:7297/Profiles/SetProfileDescription',
-    //   {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(descriptionObject),
-    //   }
-    // ).then((response) => response.json());
+    // validate for empty fields
+    if (!name || !aboutMe || !services || !phone || !contactEmail) {
+      setLoading(false);
+      toast.error('Please fill out all fields');
+      return;
+    }
 
-    // console.log(response);
+    const newUser = {
+      ...user,
+      Name: name,
+      DescriptionSection: {
+        ...user.DescriptionSection,
+        Content: aboutMe,
+      },
+      ServicesSection: {
+        ...user.ServicesSection,
+        Content: services,
+      },
+      ContactsSection: {
+        ...user.ContactsSection,
+        PhoneNumber: phone,
+        Email: contactEmail,
+      },
+    };
 
-    // setUpdatedUser()
+    try {
+      const response = await fetch(
+        `https://localhost:7297/Profiles/UpdateProfile`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newUser),
+        }
+      );
+      const data: ResponseType = await response.json();
+
+      console.log(data);
+
+      if (data.statusCode === 200) {
+        toast.success('Profile updated successfully');
+      } else {
+        toast.error('Something went wrong');
+      }
+    } catch (error) {
+      toast.error('Something went wrong');
+      console.log(error);
+    }
+
     setLoading(false);
   };
 
   return (
-    <div className="flex flex-col max-w-4xl mx-auto mt-12 gap-2">
+    <div className="flex flex-col max-w-4xl mx-auto my-12 gap-2">
       <Title />
-      {updatedUser && (
+      {user && (
         <div className="flex flex-col gap-6">
-          <BasicInfoSection />
-          <AboutMeSection />
-          <HelpSection />
+          <BasicInfoSection name={name} setName={setName} email={user.Email} />
+          <AboutMeSection aboutMe={aboutMe} setAboutMe={setAboutMe} />
+          <HelpSection services={services} setServices={setServices} />
           <div className="flex gap-8">
-            <ContactSection />
-            <ExternalLinksSection />
+            <ContactSection
+              phone={phone}
+              setPhone={setPhone}
+              contactEmail={contactEmail}
+              setContactEmail={setContactEmail}
+            />
+            {/* <ExternalLinksSection /> */}
           </div>
           <WorkExperienceSection />
           <PrimaryButton type="submit" loading={loading} onClick={handleSubmit}>
@@ -70,6 +114,8 @@ const Profile = () => {
           </PrimaryButton>
         </div>
       )}
+
+      <Toaster />
     </div>
   );
 };

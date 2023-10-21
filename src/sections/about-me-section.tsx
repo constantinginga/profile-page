@@ -1,29 +1,21 @@
-import { FormEvent, useEffect, useState, useContext } from 'react';
-import { UserContext } from '../context/UserContext';
+import { FormEvent, FC } from 'react';
 import TextArea from '../components/text-area';
 
-const AboutMeSection = () => {
-  const { user } = useContext(UserContext);
+type AboutMeSectionProps = {
+  aboutMe: string;
+  setAboutMe: (aboutMe: string) => void;
+};
 
-  useEffect(() => {
-    if (!user) return;
-
-    setUpdatedAboutMe(
-      user.DescriptionSection ? user.DescriptionSection.Content : ''
-    );
-  }, [user]);
-
-  const [updatedAboutMe, setUpdatedAboutMe] = useState('');
-
+const AboutMeSection: FC<AboutMeSectionProps> = ({ aboutMe, setAboutMe }) => {
   const handleChange = (event: FormEvent<HTMLTextAreaElement>) => {
-    setUpdatedAboutMe(event.currentTarget.value);
+    setAboutMe(event.currentTarget.value);
   };
 
   return (
     <section className="flex flex-col gap-4">
       <h2 className="font-bold text-lg">About me</h2>
       <TextArea
-        value={updatedAboutMe}
+        value={aboutMe}
         onChange={handleChange}
         placeholder="Tell other users a bit about yourself."
       />

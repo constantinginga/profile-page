@@ -19,7 +19,7 @@ const WorkExperienceSection = () => {
       <div>
         {workExperience.map((experience, index) => (
           <div
-            className="flex flex-col gap-2 bg-primary-content p-4 rounded-xl shadow-xl"
+            className="flex flex-col gap-2 bg-base-200 p-4 rounded-xl shadow-xl"
             key={index}>
             <p className="font-semibold">{experience.CompanyName}</p>
             <p className="text-sm">

@@ -34,19 +34,6 @@ export const UserProvider: FC<UserProviderProps> = ({ children }) => {
     if (!memberId) return;
 
     fetchUserData(+memberId);
-
-    // fetch call with userId here
-    // setUser({
-    //   id: +userId,
-    //   name: null,
-    //   aboutMe: null,
-    //   help: null,
-    //   phone: null,
-    //   contactEmail: null,
-    //   // external links
-    //   // work experience
-    //   // activity section
-    // });
   }, []);
 
   return (

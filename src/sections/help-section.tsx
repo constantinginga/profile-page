@@ -1,27 +1,21 @@
-import { useState, FormEvent, useContext, useEffect } from 'react';
-import { UserContext } from '../context/UserContext';
+import { FC, FormEvent } from 'react';
 import TextArea from '../components/text-area';
 
-const HelpSection = () => {
-  const { user } = useContext(UserContext);
+type HelpSectionProps = {
+  services: string;
+  setServices: (services: string) => void;
+};
 
-  useEffect(() => {
-    if (!user) return;
-
-    setUpdatedHelp(user.ServicesSection ? user.ServicesSection.Content : '');
-  }, [user]);
-
-  const [updatedHelp, setUpdatedHelp] = useState('');
-
+const HelpSection: FC<HelpSectionProps> = ({ services, setServices }) => {
   const handleChange = (event: FormEvent<HTMLTextAreaElement>) => {
-    setUpdatedHelp(event.currentTarget.value);
+    setServices(event.currentTarget.value);
   };
 
   return (
     <section className="flex flex-col gap-4">
       <h2 className="font-bold text-lg">What can I help you with?</h2>
       <TextArea
-        value={updatedHelp}
+        value={services}
         onChange={handleChange}
         placeholder="Describe what services you offer and how you can help others."
       />

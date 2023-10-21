@@ -1,29 +1,24 @@
-import { useEffect, useContext, useState } from 'react';
-import { UserContext } from '../context/UserContext';
+import { FC } from 'react';
 
-const ContactSection = () => {
-  const { user } = useContext(UserContext);
+type ContactSectionProps = {
+  phone: string;
+  setPhone: (phone: string) => void;
+  contactEmail: string;
+  setContactEmail: (contactEmail: string) => void;
+};
 
-  useEffect(() => {
-    if (!user) return;
-
-    setUpdatedPhone(
-      user.ContactsSection ? user.ContactsSection.PhoneNumber : ''
-    );
-    setUpdatedContactEmail(
-      user.ContactsSection ? user.ContactsSection.Email : ''
-    );
-  }, [user]);
-
-  const [updatedContactEmail, setUpdatedContactEmail] = useState('');
-  const [updatedPhone, setUpdatedPhone] = useState('');
-
+const ContactSection: FC<ContactSectionProps> = ({
+  phone,
+  setPhone,
+  contactEmail,
+  setContactEmail,
+}) => {
   const handleEmailChange = (event: React.FormEvent<HTMLInputElement>) => {
-    setUpdatedContactEmail(event.currentTarget.value);
+    setContactEmail(event.currentTarget.value);
   };
 
   const handlePhoneChange = (event: React.FormEvent<HTMLInputElement>) => {
-    setUpdatedPhone(event.currentTarget.value);
+    setPhone(event.currentTarget.value);
   };
 
   return (
@@ -34,14 +29,14 @@ const ContactSection = () => {
           type="text"
           placeholder="Email that you want to be contacted at"
           className="input input-bordered max-w-md w-full"
-          value={updatedContactEmail}
+          value={contactEmail}
           onChange={handleEmailChange}
         />
         <input
           type="text"
           placeholder="Phone number that you want to be contacted at"
           className="input input-bordered max-w-md w-full"
-          value={updatedPhone}
+          value={phone}
           onChange={handlePhoneChange}
         />
       </div>

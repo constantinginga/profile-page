@@ -1,21 +1,18 @@
-import { useEffect, useState, useContext, FormEvent } from 'react';
-import { UserContext } from '../context/UserContext';
+import { FormEvent, FC } from 'react';
 
-const BasicInfoSection = () => {
-  const { user } = useContext(UserContext);
+type BasicInfoSectionProps = {
+  name: string;
+  setName: (name: string) => void;
+  email: string;
+};
 
-  useEffect(() => {
-    if (!user) return;
-
-    setUpdatedName(user.Name ? user.Name : '');
-    setUserEmail(user.Email);
-  }, [user]);
-
-  const [updatedName, setUpdatedName] = useState('');
-  const [userEmail, setUserEmail] = useState('');
-
+const BasicInfoSection: FC<BasicInfoSectionProps> = ({
+  name,
+  setName,
+  email,
+}) => {
   const handleChange = (event: FormEvent<HTMLInputElement>) => {
-    setUpdatedName(event.currentTarget.value);
+    setName(event.currentTarget.value);
   };
 
   return (
@@ -28,13 +25,13 @@ const BasicInfoSection = () => {
             type="text"
             placeholder="Your name"
             className="input input-bordered max-w-md w-full"
-            value={updatedName}
+            value={name}
             onChange={handleChange}
           />
           <input
             className="input input-bordered max-w-md w-full"
             type="email"
-            value={userEmail}
+            value={email}
             disabled
           />
         </div>
