@@ -45,6 +45,8 @@ const Profile = () => {
       return;
     }
 
+    console.log('Current user: ', user.DescriptionSection);
+
     const newUser = {
       ...user,
       Name: name,
@@ -62,6 +64,8 @@ const Profile = () => {
         Email: contactEmail,
       },
     };
+
+    console.log('New user: ', newUser.DescriptionSection);
 
     try {
       const response = await fetch(
