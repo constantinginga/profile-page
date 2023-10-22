@@ -3,7 +3,7 @@ import { UserContext } from '../context/UserContext';
 import { Toaster, toast } from 'react-hot-toast';
 
 import { ResponseType } from '../types/responseType';
-import { WorkExperience } from '../types/userData';
+import { WorkExperience, ExternalLink } from '../types/userData';
 
 import PrimaryButton from '../components/primary-button';
 import AboutMeSection from '../sections/about-me-section';
@@ -12,7 +12,7 @@ import BasicInfoSection from '../sections/basic-info-section';
 import HelpSection from '../sections/help-section';
 import ContactSection from '../sections/contact-section';
 import WorkExperienceSection from '../sections/work-experience-section';
-// import ExternalLinksSection from '../sections/external-links-section';
+import ExternalLinksSection from '../sections/external-links-section';
 
 const Profile = () => {
   const [loading, setLoading] = useState(false);
@@ -24,6 +24,7 @@ const Profile = () => {
   const [phone, setPhone] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [workExperience, setWorkExperience] = useState<WorkExperience[]>([]);
+  const [externalLinks, setExternalLinks] = useState<ExternalLink[]>([]);
 
   useEffect(() => {
     if (!user) return;
@@ -37,6 +38,9 @@ const Profile = () => {
       user.WorkExperienceSection
         ? user.WorkExperienceSection.WorkExperiences
         : []
+    );
+    setExternalLinks(
+      user.ExternalLinksSection ? user.ExternalLinksSection.ExternalLinks : []
     );
   }, [user]);
 
@@ -53,8 +57,8 @@ const Profile = () => {
     }
 
     console.log(
-      'Current work experience: ',
-      user.WorkExperienceSection.WorkExperiences
+      'Current external links: ',
+      user.ExternalLinksSection.ExternalLinks
     );
 
     const newUser = {
@@ -77,11 +81,15 @@ const Profile = () => {
         ...user.WorkExperienceSection,
         WorkExperiences: workExperience,
       },
+      ExternalLinksSection: {
+        ...user.ExternalLinksSection,
+        ExternalLinks: externalLinks,
+      },
     };
 
     console.log(
-      'New work experience: ',
-      newUser.WorkExperienceSection.WorkExperiences
+      'New external links: ',
+      newUser.ExternalLinksSection.ExternalLinks
     );
 
     try {
@@ -120,15 +128,16 @@ const Profile = () => {
           <BasicInfoSection name={name} setName={setName} email={user.Email} />
           <AboutMeSection aboutMe={aboutMe} setAboutMe={setAboutMe} />
           <HelpSection services={services} setServices={setServices} />
-          <div className="flex gap-8">
-            <ContactSection
-              phone={phone}
-              setPhone={setPhone}
-              contactEmail={contactEmail}
-              setContactEmail={setContactEmail}
-            />
-            {/* <ExternalLinksSection /> */}
-          </div>
+          <ContactSection
+            phone={phone}
+            setPhone={setPhone}
+            contactEmail={contactEmail}
+            setContactEmail={setContactEmail}
+          />
+          <ExternalLinksSection
+            externalLinks={externalLinks}
+            setExternalLinks={setExternalLinks}
+          />
           <WorkExperienceSection
             workExperience={workExperience}
             setWorkExperience={setWorkExperience}

@@ -3,12 +3,6 @@ import { WorkExperience } from '../types/userData';
 import { UserContext } from '../context/UserContext';
 import { toast } from 'react-hot-toast';
 
-declare global {
-  interface Window {
-    new_work_experience: HTMLDialogElement;
-  }
-}
-
 type WorkExperienceSectionProps = {
   workExperience: WorkExperience[];
   setWorkExperience: (workExperience: WorkExperience[]) => void;
@@ -43,6 +37,7 @@ const WorkExperienceSection: FC<WorkExperienceSectionProps> = ({
     formFields;
 
   const openModal = () => {
+    setSelectedWorkExperienceId(null);
     setFormFields(defaultFormFields);
     window.new_work_experience.showModal();
   };
@@ -243,7 +238,7 @@ const WorkExperienceSection: FC<WorkExperienceSectionProps> = ({
             </button>
           </form>
           <h3 className="font-bold text-lg">
-            {companyName && position && positionDescription && startDate
+            {selectedWorkExperienceId !== null
               ? 'Update work experience'
               : 'New work experience'}
           </h3>
@@ -290,7 +285,7 @@ const WorkExperienceSection: FC<WorkExperienceSectionProps> = ({
               />
             </div>
           </div>
-          {companyName && position && positionDescription && startDate ? (
+          {selectedWorkExperienceId !== null ? (
             <button
               className="btn btn-primary mt-4"
               onClick={handleEditWorkExperience}>
