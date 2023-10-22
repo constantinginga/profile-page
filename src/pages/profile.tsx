@@ -3,6 +3,7 @@ import { UserContext } from '../context/UserContext';
 import { Toaster, toast } from 'react-hot-toast';
 
 import { ResponseType } from '../types/responseType';
+import { WorkExperience } from '../types/userData';
 
 import PrimaryButton from '../components/primary-button';
 import AboutMeSection from '../sections/about-me-section';
@@ -22,6 +23,7 @@ const Profile = () => {
   const [services, setServices] = useState('');
   const [phone, setPhone] = useState('');
   const [contactEmail, setContactEmail] = useState('');
+  const [workExperience, setWorkExperience] = useState<WorkExperience[]>([]);
 
   useEffect(() => {
     if (!user) return;
@@ -31,6 +33,11 @@ const Profile = () => {
     setServices(user.ServicesSection ? user.ServicesSection.Content : '');
     setPhone(user.ContactsSection ? user.ContactsSection.PhoneNumber : '');
     setContactEmail(user.ContactsSection ? user.ContactsSection.Email : '');
+    setWorkExperience(
+      user.WorkExperienceSection
+        ? user.WorkExperienceSection.WorkExperiences
+        : []
+    );
   }, [user]);
 
   const handleSubmit = async () => {
@@ -45,7 +52,10 @@ const Profile = () => {
       return;
     }
 
-    console.log('Current user: ', user.DescriptionSection);
+    console.log(
+      'Current work experience: ',
+      user.WorkExperienceSection.WorkExperiences
+    );
 
     const newUser = {
       ...user,
@@ -63,9 +73,16 @@ const Profile = () => {
         PhoneNumber: phone,
         Email: contactEmail,
       },
+      WorkExperienceSection: {
+        ...user.WorkExperienceSection,
+        WorkExperiences: workExperience,
+      },
     };
 
-    console.log('New user: ', newUser.DescriptionSection);
+    console.log(
+      'New work experience: ',
+      newUser.WorkExperienceSection.WorkExperiences
+    );
 
     try {
       const response = await fetch(
@@ -112,7 +129,10 @@ const Profile = () => {
             />
             {/* <ExternalLinksSection /> */}
           </div>
-          <WorkExperienceSection />
+          <WorkExperienceSection
+            workExperience={workExperience}
+            setWorkExperience={setWorkExperience}
+          />
           <PrimaryButton type="submit" loading={loading} onClick={handleSubmit}>
             Save changes
           </PrimaryButton>
