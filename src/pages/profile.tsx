@@ -58,7 +58,7 @@ const Profile = () => {
 
     console.log(
       'Current external links: ',
-      user.ExternalLinksSection.ExternalLinks
+      user
     );
 
     const newUser = {
@@ -89,7 +89,7 @@ const Profile = () => {
 
     console.log(
       'New external links: ',
-      newUser.ExternalLinksSection.ExternalLinks
+      newUser
     );
 
     try {
