@@ -31,7 +31,7 @@ type WorkExperienceSection = {
 };
 
 export type WorkExperience = {
-  WorkExperienceId: number;
+  WorkExperienceId: string;
   MemberId: number;
   StartDate: string;
   EndDate: string | null;
@@ -47,7 +47,7 @@ type ExternalLinksSection = {
 };
 
 export type ExternalLink = {
-  ExternalLinkId: number;
+  ExternalLinkId: string;
   MemberId: number;
   Title: string;
   Url: string;

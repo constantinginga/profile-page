@@ -1,4 +1,5 @@
 import { useState, FC, useContext, FormEvent } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { WorkExperience } from '../types/userData';
 import { UserContext } from '../context/UserContext';
 import { toast } from 'react-hot-toast';
@@ -31,7 +32,7 @@ const WorkExperienceSection: FC<WorkExperienceSectionProps> = ({
   const { user } = useContext(UserContext);
   const [formFields, setFormFields] = useState<TFormFields>(defaultFormFields);
   const [selectedWorkExperienceId, setSelectedWorkExperienceId] = useState<
-    number | null
+    string | null
   >(null);
   const { companyName, position, positionDescription, startDate, endDate } =
     formFields;
@@ -71,8 +72,7 @@ const WorkExperienceSection: FC<WorkExperienceSectionProps> = ({
     window.new_work_experience.close();
 
     const newWorkExperience: WorkExperience = {
-      // temporary, remove when it is serial
-      WorkExperienceId: 3,
+      WorkExperienceId: uuidv4(),
       MemberId: user.MemberId,
       CompanyName: companyName,
       Position: position,
@@ -142,7 +142,6 @@ const WorkExperienceSection: FC<WorkExperienceSectionProps> = ({
     if (!selectedWorkExperienceId) return;
 
     const newWorkExperience: WorkExperience = {
-      // temporary, remove when it is serial
       WorkExperienceId: selectedWorkExperienceId,
       MemberId: user.MemberId,
       CompanyName: companyName,

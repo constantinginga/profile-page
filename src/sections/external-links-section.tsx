@@ -1,4 +1,5 @@
 import { useState, useContext, FC, FormEvent } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { UserContext } from '../context/UserContext';
 import { ExternalLink } from '../types/userData';
 import { toast } from 'react-hot-toast';
@@ -25,7 +26,7 @@ const ExternalLinksSection: FC<ExternalLinkProps> = ({
   const { user } = useContext(UserContext);
   const [formFields, setFormFields] = useState<TFormFields>(defaultFormFields);
   const [selectedExternalLinkId, setSelectedExternalLinkId] = useState<
-    number | null
+    string | null
   >(null);
   const { title, url } = formFields;
 
@@ -56,8 +57,7 @@ const ExternalLinksSection: FC<ExternalLinkProps> = ({
     window.new_external_link.close();
 
     const newExternalLink: ExternalLink = {
-      // temporary, remove when it is serial
-      ExternalLinkId: 3,
+      ExternalLinkId: uuidv4(),
       MemberId: user.MemberId,
       Title: title,
       Url: url,
@@ -85,7 +85,6 @@ const ExternalLinksSection: FC<ExternalLinkProps> = ({
     if (!selectedExternalLinkId) return;
 
     const newExternalLink: ExternalLink = {
-      // temporary, remove when it is serial
       ExternalLinkId: selectedExternalLinkId,
       MemberId: user.MemberId,
       Title: title,
