@@ -1,4 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
+import { createClient } from '@supabase/supabase-js';
 import { UserContext } from '../context/UserContext';
 import { Toaster, toast } from 'react-hot-toast';
 
@@ -25,11 +26,19 @@ const Profile = () => {
   const [contactEmail, setContactEmail] = useState('');
   const [workExperience, setWorkExperience] = useState<WorkExperience[]>([]);
   const [externalLinks, setExternalLinks] = useState<ExternalLink[]>([]);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>('');
+
+  const supabase = createClient(
+    process.env.SUPABASE_URL as string,
+    process.env.SUPABASE_SECRET_KEY as string
+  );
 
   useEffect(() => {
     if (!user) return;
 
     setName(user.Name ? user.Name : '');
+    setImageUrl(user.Image ? user.Image : '');
     setAboutMe(user.DescriptionSection ? user.DescriptionSection.Content : '');
     setServices(user.ServicesSection ? user.ServicesSection.Content : '');
     setPhone(user.ContactsSection ? user.ContactsSection.PhoneNumber : '');
@@ -56,10 +65,36 @@ const Profile = () => {
       return;
     }
 
-    console.log(
-      'Current external links: ',
-      user
-    );
+    if (selectedImage) {
+      // try replacing avatar if it already exists in bucket
+      const { error: replaceError } = await supabase.storage
+        .from('avatars')
+        .update(`${user.MemberId}`, selectedImage, {
+          upsert: true,
+          cacheControl: '1',
+        });
+
+      if (replaceError) {
+        // if avatar doesn't exist in bucket, upload it
+        const { error } = await supabase.storage
+          .from('avatars')
+          .upload(`${user.MemberId}`, selectedImage);
+
+        if (error) {
+          console.log('upload ERROR: ', error);
+        }
+      }
+    }
+
+    const { data: imageData } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(`${user.MemberId}`);
+
+    if (imageData) {
+      setImageUrl(imageData.publicUrl);
+    }
+
+    console.log('Current external links: ', user);
 
     const newUser = {
       ...user,
@@ -85,12 +120,10 @@ const Profile = () => {
         ...user.ExternalLinksSection,
         ExternalLinks: externalLinks,
       },
+      Image: imageData ? imageData.publicUrl : '',
     };
 
-    console.log(
-      'New external links: ',
-      newUser
-    );
+    console.log('New external links: ', newUser);
 
     try {
       const response = await fetch(
@@ -125,7 +158,13 @@ const Profile = () => {
       <Title />
       {user && (
         <div className="flex flex-col gap-6">
-          <BasicInfoSection name={name} setName={setName} email={user.Email} />
+          <BasicInfoSection
+            name={name}
+            setName={setName}
+            email={user.Email}
+            imageUrl={imageUrl}
+            setSelectedImage={setSelectedImage}
+          />
           <AboutMeSection aboutMe={aboutMe} setAboutMe={setAboutMe} />
           <HelpSection services={services} setServices={setServices} />
           <ContactSection

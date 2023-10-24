@@ -2,6 +2,7 @@ export type UserData = {
   MemberId: number;
   UpdatedDt: string | null;
   Name: string | null;
+  Image: string | null;
   Email: string;
   DescriptionSection: DescriptionSection;
   ContactsSection: ContactsSection;

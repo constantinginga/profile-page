@@ -173,8 +173,8 @@ const ExternalLinksSection: FC<ExternalLinkProps> = ({
               className="cursor-pointer"
               onClick={() => openEditModal(link)}>
               <svg
-                stroke="#3ABEF7"
-                fill="#3ABEF7"
+                stroke="#1ECDBC"
+                fill="#1ECDBC"
                 strokeWidth="0"
                 viewBox="0 0 24 24"
                 height="1.25em"

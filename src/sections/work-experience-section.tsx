@@ -209,7 +209,7 @@ const WorkExperienceSection: FC<WorkExperienceSectionProps> = ({
                 <span>Remove</span>
               </button>
               <button
-                className="btn btn-sm w-fit btn-info"
+                className="btn btn-sm w-fit btn-accent"
                 onClick={() => openEditModal(experience)}>
                 <svg
                   stroke="currentColor"
