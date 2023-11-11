@@ -1,4 +1,6 @@
 import { FC } from 'react';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 
 type ContactSectionProps = {
   phone: string;
@@ -17,9 +19,9 @@ const ContactSection: FC<ContactSectionProps> = ({
     setContactEmail(event.currentTarget.value);
   };
 
-  const handlePhoneChange = (event: React.FormEvent<HTMLInputElement>) => {
-    setPhone(event.currentTarget.value);
-  };
+  // const handlePhoneChange = (event: any) => {
+  //   setPhone(event.currentTarget.value);
+  // };
 
   return (
     <section className="flex flex-col gap-4 flex-1">
@@ -32,12 +34,12 @@ const ContactSection: FC<ContactSectionProps> = ({
           value={contactEmail}
           onChange={handleEmailChange}
         />
-        <input
-          type="text"
+        <PhoneInput
+          defaultCountry="DK"
           placeholder="Phone number that you want to be contacted at"
           className="input input-bordered max-w-md w-full"
           value={phone}
-          onChange={handlePhoneChange}
+          onChange={setPhone}
         />
       </div>
     </section>

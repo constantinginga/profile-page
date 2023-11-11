@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { UserContext } from '../context/UserContext';
 import { Toaster, toast } from 'react-hot-toast';
 
@@ -16,6 +16,7 @@ import WorkExperienceSection from '../sections/work-experience-section';
 import ExternalLinksSection from '../sections/external-links-section';
 
 const Profile = () => {
+  const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
   const [loading, setLoading] = useState(false);
   const { user } = useContext(UserContext);
 
@@ -29,10 +30,16 @@ const Profile = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>('');
 
-  const supabase = createClient(
-    process.env.SUPABASE_URL as string,
-    process.env.SUPABASE_SECRET_KEY as string
-  );
+  useEffect(() => {
+    if (supabase === null) {
+      const client = createClient(
+        process.env.SUPABASE_URL as string,
+        process.env.SUPABASE_SECRET_KEY as string
+      );
+
+      setSupabase(client);
+    }
+  }, [supabase]);
 
   useEffect(() => {
     if (!user) return;
@@ -56,7 +63,7 @@ const Profile = () => {
   const handleSubmit = async () => {
     setLoading(true);
 
-    if (!user) return;
+    if (!user || !supabase) return;
 
     // validate for empty fields
     if (!name || !aboutMe || !services || !phone || !contactEmail) {

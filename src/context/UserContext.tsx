@@ -1,5 +1,6 @@
 import { FC, ReactNode, createContext, useState, useEffect } from 'react';
 import { UserData } from '../types/userData';
+import { toast } from 'react-hot-toast';
 
 type UserContextType = {
   user: UserData | null;
@@ -19,21 +20,30 @@ export const UserProvider: FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<UserData | null>(null);
 
   useEffect(() => {
-    async function fetchUserData(id: number) {
+    async function fetchUserData(id: number, token: string) {
       const response = await fetch(
-        `https://localhost:7297/Profiles/GetProfile?memberId=${id}`
+        `https://localhost:7297/Profiles/CheckToken?memberId=${id}&token=${token}`
       );
-      const data: UserData = await response.json();
-      setUser(data);
+      const data = await response.json();
+      if (data.StatusCode) {
+        toast.error('Something went wrong');
+      } else {
+        console.log('User data: ', data);
+        setUser(data as UserData);
+      }
     }
 
     // get query param from url
     const params = new URLSearchParams(window.location.search);
     const memberId = params.get('memberId');
+    const token = params.get('token');
 
-    if (!memberId) return;
+    if (!memberId || !token) {
+      toast.error('Something went wrong');
+      return;
+    }
 
-    fetchUserData(+memberId);
+    fetchUserData(+memberId, token);
   }, []);
 
   return (
