@@ -18,7 +18,7 @@ import ExternalLinksSection from '../sections/profile/external-links-section';
 const Profile = () => {
   const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
   const [loading, setLoading] = useState(false);
-  const { user } = useContext(UserContext);
+  const { user, token } = useContext(UserContext);
 
   const [name, setName] = useState('');
   const [aboutMe, setAboutMe] = useState('');
@@ -164,7 +164,7 @@ const Profile = () => {
 
     try {
       const response = await fetch(
-        `https://localhost:7297/Profiles/UpdateProfile`,
+        `https://localhost:7297/Profiles/UpdateProfile?memberId=${user.MemberId}&token=${token}`,
         {
           method: 'POST',
           headers: {

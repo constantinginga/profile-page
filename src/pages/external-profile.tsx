@@ -6,6 +6,7 @@ import ExternalBasicInfoSection from '../sections/external-profile/basic-info-se
 import ServicesSection from '../sections/external-profile/services-section';
 import ExternalContactSection from '../sections/external-profile/external-contact-section';
 import PublicLinksSection from '../sections/external-profile/public-links-section';
+import ExternalWorkExperienceSection from '../sections/external-profile/external-work-experience-section';
 
 const ExternalProfile = () => {
   const { id } = useParams();
@@ -34,6 +35,7 @@ const ExternalProfile = () => {
             name={user.Name}
             banner={user.Banner}
             image={user.Image}
+            connectedId={user.MemberId}
           />
           {user.DescriptionSection && (
             <ExternalDescriptionSection
@@ -53,6 +55,12 @@ const ExternalProfile = () => {
             user.ExternalLinksSection.ExternalLinks.length > 0 && (
               <PublicLinksSection
                 externalLinks={user.ExternalLinksSection.ExternalLinks}
+              />
+            )}
+          {user.WorkExperienceSection &&
+            user.WorkExperienceSection.WorkExperiences.length > 0 && (
+              <ExternalWorkExperienceSection
+                workExperience={user.WorkExperienceSection.WorkExperiences}
               />
             )}
         </div>
