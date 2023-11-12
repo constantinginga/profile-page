@@ -1,5 +1,8 @@
 import { FC, useEffect, useState } from 'react';
 import { Connection } from '../../types/connection';
+import { toast } from 'react-hot-toast';
+
+import PrimaryButton from '../../components/primary-button';
 
 type ExternalBasicInfoSectionProps = {
   banner: string | null;
@@ -16,6 +19,7 @@ const ExternalBasicInfoSection: FC<ExternalBasicInfoSectionProps> = ({
 }) => {
   const [isMember, setIsMember] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const params = new URLSearchParams(window.location.search);
   const memberId = params.get('memberId');
@@ -73,6 +77,8 @@ const ExternalBasicInfoSection: FC<ExternalBasicInfoSectionProps> = ({
   const handleConnect = async () => {
     if (!memberId || !token) return;
 
+    setIsLoading(true);
+
     const connection = {
       MemberId: +memberId,
       ConnectedId: connectedId,
@@ -91,11 +97,14 @@ const ExternalBasicInfoSection: FC<ExternalBasicInfoSectionProps> = ({
     );
     const data = await response.json();
 
-    console.log('data: ', data);
-
     if (data.StatusCode === 200) {
       setIsConnected(true);
+      toast.success('Connection request sent!', {
+        duration: 3000,
+      });
     }
+
+    setIsLoading(false);
   };
 
   return (
@@ -132,11 +141,13 @@ const ExternalBasicInfoSection: FC<ExternalBasicInfoSectionProps> = ({
                   Connection sent
                 </button>
               ) : (
-                <button
-                  className="btn btn-primary mr-4"
-                  onClick={handleConnect}>
+                <PrimaryButton
+                  type="submit"
+                  loading={isLoading}
+                  onClick={handleConnect}
+                  className="mr-4">
                   + Connect
-                </button>
+                </PrimaryButton>
               ))}
           </div>
         </div>

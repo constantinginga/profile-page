@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import { UserData } from '../types/userData';
 import ExternalDescriptionSection from '../sections/external-profile/description-section';
 import ExternalBasicInfoSection from '../sections/external-profile/basic-info-section';
@@ -64,6 +65,7 @@ const ExternalProfile = () => {
               />
             )}
         </div>
+        <Toaster />
       </div>
     )
   );
