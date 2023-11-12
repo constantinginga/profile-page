@@ -55,8 +55,6 @@ const BasicInfoSection: FC<BasicInfoSectionProps> = ({
     bannerInput.current?.click();
   };
 
-  console.log(bannerUrl);
-
   return (
     <section className="flex flex-col gap-4">
       <div className="flex gap-2 flex-col">
@@ -91,9 +89,7 @@ const BasicInfoSection: FC<BasicInfoSectionProps> = ({
               className="avatar placeholder cursor-pointer absolute group transition-all w-fit ml-4 bottom-[-2rem]"
               onClick={triggerAvatarUpload}>
               <div className="bg-black/70 rounded-full w-full absolute opacity-0 group-hover:opacity-100" />
-              <div className="bg-neutral-focus text-neutral-content rounded-full w-20">
-                <span className="text-3xl">{name[0]}</span>
-              </div>
+              <div className="bg-primary text-neutral-content rounded-full w-20"></div>
             </div>
           )}
         </div>

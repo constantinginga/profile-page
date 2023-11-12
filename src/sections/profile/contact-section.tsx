@@ -19,10 +19,6 @@ const ContactSection: FC<ContactSectionProps> = ({
     setContactEmail(event.currentTarget.value);
   };
 
-  // const handlePhoneChange = (event: any) => {
-  //   setPhone(event.currentTarget.value);
-  // };
-
   return (
     <section className="flex flex-col gap-4 flex-1">
       <h2 className="font-bold text-lg">Contact information</h2>

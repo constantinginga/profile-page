@@ -1,5 +1,5 @@
 import { FC, FormEvent } from 'react';
-import TextArea from '../components/text-area';
+import TextArea from '../../components/text-area';
 
 type HelpSectionProps = {
   services: string;

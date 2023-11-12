@@ -7,12 +7,13 @@ import { ResponseType } from '../types/responseType';
 import { WorkExperience, ExternalLink } from '../types/userData';
 
 import PrimaryButton from '../components/primary-button';
-import AboutMeSection from '../sections/about-me-section';
-import BasicInfoSection from '../sections/basic-info-section';
-import HelpSection from '../sections/help-section';
-import ContactSection from '../sections/contact-section';
-import WorkExperienceSection from '../sections/work-experience-section';
-import ExternalLinksSection from '../sections/external-links-section';
+import AboutMeSection from '../sections/profile/about-me-section';
+import BasicInfoSection from '../sections/profile/basic-info-section';
+import ShareProfile from '../sections/profile/share-profile';
+import HelpSection from '../sections/profile/help-section';
+import ContactSection from '../sections/profile/contact-section';
+import WorkExperienceSection from '../sections/profile/work-experience-section';
+import ExternalLinksSection from '../sections/profile/external-links-section';
 
 const Profile = () => {
   const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
@@ -203,6 +204,7 @@ const Profile = () => {
             bannerUrl={bannerUrl}
             setSelectedBanner={setSelectedBanner}
           />
+          <ShareProfile memberId={user.MemberId} />
           <AboutMeSection aboutMe={aboutMe} setAboutMe={setAboutMe} />
           <HelpSection services={services} setServices={setServices} />
           <ContactSection

@@ -1,7 +1,7 @@
 import { useState, useContext, FC, FormEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { UserContext } from '../context/UserContext';
-import { ExternalLink } from '../types/userData';
+import { UserContext } from '../../context/UserContext';
+import { ExternalLink } from '../../types/userData';
 import { toast } from 'react-hot-toast';
 
 type ExternalLinkProps = {

@@ -1,5 +1,5 @@
 import { FormEvent, FC } from 'react';
-import TextArea from '../components/text-area';
+import TextArea from '../../components/text-area';
 
 type AboutMeSectionProps = {
   aboutMe: string;

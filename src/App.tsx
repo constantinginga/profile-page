@@ -1,4 +1,6 @@
+import { Routes, Route } from 'react-router-dom';
 import Profile from './pages/profile';
+import ExternalProfile from './pages/external-profile';
 import { UserProvider } from './context/UserContext';
 
 declare global {
@@ -10,9 +12,17 @@ declare global {
 
 function App() {
   return (
-    <UserProvider>
-      <Profile />
-    </UserProvider>
+    <Routes>
+      <Route path="external-profile/:id" element={<ExternalProfile />} />
+      <Route
+        path="edit-profile"
+        element={
+          <UserProvider>
+            <Profile />
+          </UserProvider>
+        }
+      />
+    </Routes>
   );
 }
 

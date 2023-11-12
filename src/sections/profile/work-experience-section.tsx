@@ -1,7 +1,7 @@
 import { useState, FC, useContext, FormEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { WorkExperience } from '../types/userData';
-import { UserContext } from '../context/UserContext';
+import { WorkExperience } from '../../types/userData';
+import { UserContext } from '../../context/UserContext';
 import { toast } from 'react-hot-toast';
 
 type WorkExperienceSectionProps = {
