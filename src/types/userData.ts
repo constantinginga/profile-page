@@ -3,6 +3,7 @@ export type UserData = {
   UpdatedDt: string | null;
   Name: string | null;
   Image: string | null;
+  Banner: string | null;
   Email: string;
   DescriptionSection: DescriptionSection;
   ContactsSection: ContactsSection;

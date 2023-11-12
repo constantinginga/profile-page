@@ -8,7 +8,6 @@ import { WorkExperience, ExternalLink } from '../types/userData';
 
 import PrimaryButton from '../components/primary-button';
 import AboutMeSection from '../sections/about-me-section';
-import Title from '../components/title';
 import BasicInfoSection from '../sections/basic-info-section';
 import HelpSection from '../sections/help-section';
 import ContactSection from '../sections/contact-section';
@@ -28,7 +27,9 @@ const Profile = () => {
   const [workExperience, setWorkExperience] = useState<WorkExperience[]>([]);
   const [externalLinks, setExternalLinks] = useState<ExternalLink[]>([]);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedBanner, setSelectedBanner] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>('');
+  const [bannerUrl, setBannerUrl] = useState<string | null>('');
 
   useEffect(() => {
     if (supabase === null) {
@@ -46,6 +47,7 @@ const Profile = () => {
 
     setName(user.Name ? user.Name : '');
     setImageUrl(user.Image ? user.Image : '');
+    setBannerUrl(user.Banner ? user.Banner : '');
     setAboutMe(user.DescriptionSection ? user.DescriptionSection.Content : '');
     setServices(user.ServicesSection ? user.ServicesSection.Content : '');
     setPhone(user.ContactsSection ? user.ContactsSection.PhoneNumber : '');
@@ -101,7 +103,33 @@ const Profile = () => {
       setImageUrl(imageData.publicUrl);
     }
 
-    console.log('Current external links: ', user);
+    if (selectedBanner) {
+      const { error: replaceError } = await supabase.storage
+        .from('banners')
+        .update(`${user.MemberId}`, selectedBanner, {
+          upsert: true,
+          cacheControl: '1',
+        });
+
+      if (replaceError) {
+        // if avatar doesn't exist in bucket, upload it
+        const { error } = await supabase.storage
+          .from('banners')
+          .upload(`${user.MemberId}`, selectedBanner);
+
+        if (error) {
+          console.log('upload ERROR: ', error);
+        }
+      }
+    }
+
+    const { data: bannerData } = supabase.storage
+      .from('banners')
+      .getPublicUrl(`${user.MemberId}`);
+
+    if (bannerData) {
+      setBannerUrl(bannerData.publicUrl);
+    }
 
     const newUser = {
       ...user,
@@ -128,6 +156,7 @@ const Profile = () => {
         ExternalLinks: externalLinks,
       },
       Image: imageData ? imageData.publicUrl : '',
+      Banner: bannerData ? bannerData.publicUrl : '',
     };
 
     console.log('New external links: ', newUser);
@@ -162,7 +191,7 @@ const Profile = () => {
 
   return (
     <div className="flex flex-col max-w-4xl mx-auto my-12 gap-2">
-      <Title />
+      {/* <Title />  */}
       {user && (
         <div className="flex flex-col gap-6">
           <BasicInfoSection
@@ -171,6 +200,8 @@ const Profile = () => {
             email={user.Email}
             imageUrl={imageUrl}
             setSelectedImage={setSelectedImage}
+            bannerUrl={bannerUrl}
+            setSelectedBanner={setSelectedBanner}
           />
           <AboutMeSection aboutMe={aboutMe} setAboutMe={setAboutMe} />
           <HelpSection services={services} setServices={setServices} />

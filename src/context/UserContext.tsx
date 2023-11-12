@@ -25,6 +25,9 @@ export const UserProvider: FC<UserProviderProps> = ({ children }) => {
         `https://localhost:7297/Profiles/CheckToken?memberId=${id}&token=${token}`
       );
       const data = await response.json();
+
+      console.log('Response: ', response);
+      console.log('Data: ', data);
       if (data.StatusCode) {
         toast.error('Something went wrong');
       } else {
