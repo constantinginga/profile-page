@@ -30,7 +30,7 @@ const ConnectionCard: FC<ConnectionCardProps> = ({ request, isRequest }) => {
       </figure>
       <div className="card-body items-center text-center">
         <Link
-          to={`/external-profile/${request.connection.MemberId}`}
+          to={`http://localhost:5173/external-profile/${request.connection.MemberId}`}
           target="_blank">
           <h2 className="card-title underline">{request.Name}</h2>
         </Link>
