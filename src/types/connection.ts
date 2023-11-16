@@ -4,3 +4,9 @@ export type Connection = {
   ConnectedId: number;
   Status?: boolean;
 };
+
+export type ConnectionWithProfile = {
+  connection: Connection;
+  Name: string;
+  Image: string;
+};
