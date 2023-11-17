@@ -54,3 +54,8 @@ export type ExternalLink = {
   Title: string;
   Url: string;
 };
+
+export type MinimalUserData = {
+  Id: number;
+  Name: string | null;
+};

@@ -1,6 +1,7 @@
 import { FC, ReactNode, createContext, useState, useEffect } from 'react';
 import { Connection, ConnectionWithProfile } from '../types/connection';
 import { toast } from 'react-hot-toast';
+import { MinimalUserData } from '../types/userData';
 
 type ConnectionContextType = {
   connections: ConnectionWithProfile[];
@@ -9,6 +10,7 @@ type ConnectionContextType = {
   setRequests: (requests: ConnectionWithProfile[]) => void;
   acceptRequest: (req: ConnectionWithProfile) => void;
   declineRequest: (req: Connection) => void;
+  searchProfiles: (terms: string) => Promise<MinimalUserData[] | null>;
 };
 
 type ConnectionProviderProps = {
@@ -22,6 +24,7 @@ export const ConnectionContext = createContext<ConnectionContextType>({
   setRequests: () => {},
   acceptRequest: () => {},
   declineRequest: () => {},
+  searchProfiles: () => Promise.resolve(null),
 });
 
 export const ConnectionProvider: FC<ConnectionProviderProps> = ({
@@ -167,6 +170,23 @@ export const ConnectionProvider: FC<ConnectionProviderProps> = ({
     }
   };
 
+  const searchProfiles = async (terms: string) => {
+    const response = await fetch(
+      `https://localhost:7297/Profiles/SearchProfiles?memberId=${memberId}&token=${token}&terms=${terms}`,
+      {
+        method: 'GET',
+      }
+    );
+    const data = await response.json();
+
+    if (data.StatusCode) {
+      toast.error('Something went wrong.');
+      return null;
+    }
+
+    return data as MinimalUserData[];
+  };
+
   return (
     <ConnectionContext.Provider
       value={{
@@ -176,6 +196,7 @@ export const ConnectionProvider: FC<ConnectionProviderProps> = ({
         setRequests,
         acceptRequest,
         declineRequest,
+        searchProfiles,
       }}>
       {children}
     </ConnectionContext.Provider>
