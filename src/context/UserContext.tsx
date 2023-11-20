@@ -5,7 +5,10 @@ import { toast } from 'react-hot-toast';
 type UserContextType = {
   user: UserData | null;
   token: string | null;
+  completionScore: number;
+  setCompletionScore: (score: number) => void;
   setUser: (user: UserData) => void;
+  calculateCompletionScore: (user: UserData) => number;
 };
 
 type UserProviderProps = {
@@ -15,12 +18,16 @@ type UserProviderProps = {
 export const UserContext = createContext<UserContextType>({
   user: null,
   token: null,
+  completionScore: 0,
+  setCompletionScore: () => {},
   setUser: () => {},
+  calculateCompletionScore: () => 0,
 });
 
 export const UserProvider: FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<UserData | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [completionScore, setCompletionScore] = useState<number>(0);
 
   useEffect(() => {
     async function fetchUserData(id: number, token: string) {
@@ -32,7 +39,13 @@ export const UserProvider: FC<UserProviderProps> = ({ children }) => {
       if (data.StatusCode) {
         toast.error('Something went wrong');
       } else {
-        setUser(data as UserData);
+        const fetchedUser = data as UserData;
+
+        setUser(fetchedUser);
+
+        console.log(fetchedUser);
+
+        setCompletionScore(calculateCompletionScore(fetchedUser));
       }
     }
 
@@ -51,12 +64,43 @@ export const UserProvider: FC<UserProviderProps> = ({ children }) => {
     fetchUserData(+memberId, token);
   }, []);
 
+  const calculateCompletionScore = (fetchedUser: UserData) => {
+    let score = 0;
+
+    if (fetchedUser.Banner || fetchedUser.Image) {
+      score++;
+    }
+
+    if (fetchedUser.Name) score++;
+
+    if (fetchedUser.DescriptionSection.Content) score++;
+
+    if (fetchedUser.ServicesSection.Content) score++;
+
+    if (
+      fetchedUser.ContactsSection.Email ||
+      fetchedUser.ContactsSection.PhoneNumber
+    )
+      score++;
+
+    if (fetchedUser.ExternalLinksSection.ExternalLinks.length > 0) score++;
+
+    if (fetchedUser.WorkExperienceSection.WorkExperiences.length > 0) score++;
+
+    score = Math.floor((score / 7) * 100);
+
+    return score;
+  };
+
   return (
     <UserContext.Provider
       value={{
         user,
         token,
+        completionScore,
+        setCompletionScore,
         setUser,
+        calculateCompletionScore,
       }}>
       {children}
     </UserContext.Provider>

@@ -18,7 +18,8 @@ import ExternalLinksSection from '../sections/profile/external-links-section';
 const Profile = () => {
   const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
   const [loading, setLoading] = useState(false);
-  const { user, token } = useContext(UserContext);
+  const { user, token, calculateCompletionScore, setCompletionScore } =
+    useContext(UserContext);
 
   const [name, setName] = useState('');
   const [aboutMe, setAboutMe] = useState('');
@@ -69,11 +70,11 @@ const Profile = () => {
     if (!user || !supabase) return;
 
     // validate for empty fields
-    if (!name || !aboutMe || !services || !phone || !contactEmail) {
-      setLoading(false);
-      toast.error('Please fill out all fields');
-      return;
-    }
+    // if (!name || !aboutMe || !services || !phone || !contactEmail) {
+    //   setLoading(false);
+    //   toast.error('Please fill out all fields');
+    //   return;
+    // }
 
     if (selectedImage) {
       // try replacing avatar if it already exists in bucket
@@ -160,8 +161,6 @@ const Profile = () => {
       Banner: bannerData ? bannerData.publicUrl : '',
     };
 
-    console.log('New external links: ', newUser);
-
     try {
       const response = await fetch(
         `https://localhost:7297/Profiles/UpdateProfile?memberId=${user.MemberId}&token=${token}`,
@@ -175,13 +174,13 @@ const Profile = () => {
       );
       const data: ResponseType = await response.json();
 
-      console.log(data);
-
       if (data.statusCode === 200) {
         toast.success('Profile updated successfully');
       } else {
         toast.error('Something went wrong');
       }
+
+      setCompletionScore(calculateCompletionScore(newUser));
     } catch (error) {
       toast.error('Something went wrong');
       console.log(error);

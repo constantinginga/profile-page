@@ -1,4 +1,5 @@
-import { FormEvent, FC, ChangeEvent, useRef } from 'react';
+import { FormEvent, FC, ChangeEvent, useRef, useContext } from 'react';
+import { UserContext } from '../../context/UserContext';
 import { toast } from 'react-hot-toast';
 
 type BasicInfoSectionProps = {
@@ -20,6 +21,7 @@ const BasicInfoSection: FC<BasicInfoSectionProps> = ({
   setSelectedImage,
   setSelectedBanner,
 }) => {
+  const { completionScore } = useContext(UserContext);
   const avatarInput = useRef<HTMLInputElement>(null);
   const bannerInput = useRef<HTMLInputElement>(null);
 
@@ -92,6 +94,31 @@ const BasicInfoSection: FC<BasicInfoSectionProps> = ({
               <div className="bg-primary text-neutral-content rounded-full w-20"></div>
             </div>
           )}
+        </div>
+        <div className="flex items-center gap-1 mb-2">
+          <p>Completion score: {completionScore}%</p>
+          <div
+            className="tooltip cursor-pointer"
+            data-tip="Complete all sections of your profile to get 100% completion score">
+            <svg
+              stroke="currentColor"
+              fill="currentColor"
+              strokeWidth="0"
+              viewBox="0 0 24 24"
+              height="1.25em"
+              width="1.25em"
+              xmlns="http://www.w3.org/2000/svg">
+              <g id="Circle_Info">
+                <g>
+                  <g>
+                    <path d="M11.5,15a.5.5,0,0,0,1,0h0V10.981a.5.5,0,0,0-1,0Z"></path>
+                    <circle cx="12" cy="8.999" r="0.5"></circle>
+                  </g>
+                  <path d="M12,2.065A9.934,9.934,0,1,1,2.066,12,9.945,9.945,0,0,1,12,2.065Zm0,18.867A8.934,8.934,0,1,0,3.066,12,8.944,8.944,0,0,0,12,20.932Z"></path>
+                </g>
+              </g>
+            </svg>
+          </div>
         </div>
         <div className="flex gap-4">
           <input
