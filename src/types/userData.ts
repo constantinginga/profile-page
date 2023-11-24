@@ -39,7 +39,7 @@ export type TWorkExperienceSection = {
 };
 
 export type WorkExperience = {
-  WorkExperienceId: string;
+  WorkExperienceId?: number;
   MemberId: number;
   StartDate: string;
   EndDate: string | null;
@@ -55,7 +55,7 @@ export type TExternalLinksSection = {
 };
 
 export type ExternalLink = {
-  ExternalLinkId: string;
+  ExternalLinkId?: number;
   MemberId: number;
   Title: string;
   Url: string;

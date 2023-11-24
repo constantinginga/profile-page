@@ -26,7 +26,7 @@ const ExternalLinksSection: FC<ExternalLinkProps> = ({
   const { user } = useContext(UserContext);
   const [formFields, setFormFields] = useState<TFormFields>(defaultFormFields);
   const [selectedExternalLinkId, setSelectedExternalLinkId] = useState<
-    string | null
+    number|null
   >(null);
   const { title, url } = formFields;
 
@@ -57,7 +57,6 @@ const ExternalLinksSection: FC<ExternalLinkProps> = ({
     window.new_external_link.close();
 
     const newExternalLink: ExternalLink = {
-      ExternalLinkId: uuidv4(),
       MemberId: user.MemberId,
       Title: title,
       Url: url,
@@ -139,7 +138,7 @@ const ExternalLinksSection: FC<ExternalLinkProps> = ({
       title: link.Title,
       url: link.Url,
     });
-
+    if(link.ExternalLinkId)
     setSelectedExternalLinkId(link.ExternalLinkId);
 
     window.new_external_link.showModal();

@@ -32,7 +32,7 @@ const WorkExperienceSection: FC<WorkExperienceSectionProps> = ({
   const { user } = useContext(UserContext);
   const [formFields, setFormFields] = useState<TFormFields>(defaultFormFields);
   const [selectedWorkExperienceId, setSelectedWorkExperienceId] = useState<
-    string | null
+    number|null
   >(null);
   const { companyName, position, positionDescription, startDate, endDate } =
     formFields;
@@ -72,7 +72,6 @@ const WorkExperienceSection: FC<WorkExperienceSectionProps> = ({
     window.new_work_experience.close();
 
     const newWorkExperience: WorkExperience = {
-      WorkExperienceId: uuidv4(),
       MemberId: user.MemberId,
       CompanyName: companyName,
       Position: position,
@@ -122,7 +121,7 @@ const WorkExperienceSection: FC<WorkExperienceSectionProps> = ({
       startDate: experience.StartDate.split('T')[0],
       endDate: experience.EndDate ? experience.EndDate.split('T')[0] : '',
     });
-
+    if(experience.WorkExperienceId)
     setSelectedWorkExperienceId(experience.WorkExperienceId);
 
     window.new_work_experience.showModal();
