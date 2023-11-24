@@ -12,21 +12,21 @@ export type UserData = {
   ExternalLinksSection: ExternalLinksSection;
 };
 
-type DescriptionSection = {
+export type DescriptionSection = {
   Content: string;
   PrivacySetting: boolean;
 };
 
-type ServicesSection = object & DescriptionSection;
+export type ServicesSection = object & DescriptionSection;
 
-type ContactsSection = {
+export type ContactsSection = {
   MemberId: number;
   Email: string;
   PhoneNumber: string;
   PrivacySetting: boolean;
 };
 
-type WorkExperienceSection = {
+export type WorkExperienceSection = {
   MemberId: number;
   PrivacySetting: boolean;
   WorkExperiences: WorkExperience[];
@@ -42,7 +42,7 @@ export type WorkExperience = {
   PositionDescription: string;
 };
 
-type ExternalLinksSection = {
+export type ExternalLinksSection = {
   MemberId: number;
   PrivacySetting: boolean;
   ExternalLinks: ExternalLink[];

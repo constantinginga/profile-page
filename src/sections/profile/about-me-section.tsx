@@ -1,21 +1,45 @@
 import { FormEvent, FC } from 'react';
+import { DescriptionSection } from '../../types/userData';
 import TextArea from '../../components/text-area';
 
 type AboutMeSectionProps = {
-  aboutMe: string;
-  setAboutMe: (aboutMe: string) => void;
+  aboutMe: DescriptionSection;
+  setAboutMe: (aboutMe: DescriptionSection) => void;
 };
 
 const AboutMeSection: FC<AboutMeSectionProps> = ({ aboutMe, setAboutMe }) => {
   const handleChange = (event: FormEvent<HTMLTextAreaElement>) => {
-    setAboutMe(event.currentTarget.value);
+    setAboutMe({
+      ...aboutMe,
+      Content: event.currentTarget.value,
+    });
+  };
+
+  const handlePrivacyChange = () => {
+    setAboutMe({
+      ...aboutMe,
+      PrivacySetting: !aboutMe.PrivacySetting,
+    });
   };
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="font-bold text-lg">About me</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="font-bold text-lg">About me</h2>
+        <div className="form-control">
+          <label className="label cursor-pointer gap-2">
+            <span className="label-text">Is public</span>
+            <input
+              type="checkbox"
+              className="toggle"
+              checked={aboutMe.PrivacySetting}
+              onChange={handlePrivacyChange}
+            />
+          </label>
+        </div>
+      </div>
       <TextArea
-        value={aboutMe}
+        value={aboutMe.Content}
         onChange={handleChange}
         placeholder="Tell other users a bit about yourself."
       />

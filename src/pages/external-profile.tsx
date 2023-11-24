@@ -2,17 +2,20 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { UserData } from '../types/userData';
+import { Activity } from '../types/activity';
 import ExternalDescriptionSection from '../sections/external-profile/description-section';
 import ExternalBasicInfoSection from '../sections/external-profile/basic-info-section';
 import ServicesSection from '../sections/external-profile/services-section';
 import ExternalContactSection from '../sections/external-profile/external-contact-section';
 import PublicLinksSection from '../sections/external-profile/public-links-section';
 import ExternalWorkExperienceSection from '../sections/external-profile/external-work-experience-section';
+import ActivitySection from '../sections/profile/activity-section';
 
 const ExternalProfile = () => {
   const { id } = useParams();
 
   const [user, setUser] = useState<UserData | null>(null);
+  const [activity, setActivity] = useState<Activity | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -22,7 +25,9 @@ const ExternalProfile = () => {
         `https://localhost:7297/Profiles/GetExternalProfile?memberId=${id}`
       );
       const data = await response.json();
-      setUser(data as UserData);
+
+      setUser(data.member as UserData);
+      setActivity(data.activitySection as Activity);
     }
 
     fetchProfile();
@@ -38,20 +43,22 @@ const ExternalProfile = () => {
             image={user.Image}
             connectedId={user.MemberId}
           />
-          {user.DescriptionSection && (
+          {user.DescriptionSection && user.DescriptionSection.Content && (
             <ExternalDescriptionSection
               description={user.DescriptionSection.Content}
             />
           )}
-          {user.ServicesSection && (
+          {user.ServicesSection && user.ServicesSection.Content && (
             <ServicesSection services={user.ServicesSection.Content} />
           )}
-          {user.ContactsSection && (
-            <ExternalContactSection
-              phone={user.ContactsSection.PhoneNumber}
-              email={user.ContactsSection.Email}
-            />
-          )}
+          {user.ContactsSection &&
+            (user.ContactsSection.Email ||
+              user.ContactsSection.PhoneNumber) && (
+              <ExternalContactSection
+                phone={user.ContactsSection.PhoneNumber}
+                email={user.ContactsSection.Email}
+              />
+            )}
           {user.ExternalLinksSection &&
             user.ExternalLinksSection.ExternalLinks.length > 0 && (
               <PublicLinksSection
@@ -64,6 +71,10 @@ const ExternalProfile = () => {
                 workExperience={user.WorkExperienceSection.WorkExperiences}
               />
             )}
+
+          {activity && (
+            <ActivitySection activity={activity} isExternal={true} />
+          )}
         </div>
         <Toaster />
       </div>

@@ -5,6 +5,7 @@ import { Toaster, toast } from 'react-hot-toast';
 
 import { ResponseType } from '../types/responseType';
 import { WorkExperience, ExternalLink } from '../types/userData';
+import { DescriptionSection } from '../types/userData';
 
 import PrimaryButton from '../components/primary-button';
 import AboutMeSection from '../sections/profile/about-me-section';
@@ -14,15 +15,21 @@ import HelpSection from '../sections/profile/help-section';
 import ContactSection from '../sections/profile/contact-section';
 import WorkExperienceSection from '../sections/profile/work-experience-section';
 import ExternalLinksSection from '../sections/profile/external-links-section';
+import ActivitySection from '../sections/profile/activity-section';
 
 const Profile = () => {
   const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
   const [loading, setLoading] = useState(false);
-  const { user, token, calculateCompletionScore, setCompletionScore } =
-    useContext(UserContext);
+  const {
+    user,
+    activity,
+    token,
+    calculateCompletionScore,
+    setCompletionScore,
+  } = useContext(UserContext);
 
   const [name, setName] = useState('');
-  const [aboutMe, setAboutMe] = useState('');
+  const [aboutMe, setAboutMe] = useState<DescriptionSection | null>(null);
   const [services, setServices] = useState('');
   const [phone, setPhone] = useState('');
   const [contactEmail, setContactEmail] = useState('');
@@ -50,7 +57,7 @@ const Profile = () => {
     setName(user.Name ? user.Name : '');
     setImageUrl(user.Image ? user.Image : '');
     setBannerUrl(user.Banner ? user.Banner : '');
-    setAboutMe(user.DescriptionSection ? user.DescriptionSection.Content : '');
+    setAboutMe(user.DescriptionSection ? user.DescriptionSection : null);
     setServices(user.ServicesSection ? user.ServicesSection.Content : '');
     setPhone(user.ContactsSection ? user.ContactsSection.PhoneNumber : '');
     setContactEmail(user.ContactsSection ? user.ContactsSection.Email : '');
@@ -68,13 +75,6 @@ const Profile = () => {
     setLoading(true);
 
     if (!user || !supabase) return;
-
-    // validate for empty fields
-    // if (!name || !aboutMe || !services || !phone || !contactEmail) {
-    //   setLoading(false);
-    //   toast.error('Please fill out all fields');
-    //   return;
-    // }
 
     if (selectedImage) {
       // try replacing avatar if it already exists in bucket
@@ -138,7 +138,7 @@ const Profile = () => {
       Name: name,
       DescriptionSection: {
         ...user.DescriptionSection,
-        Content: aboutMe,
+        ...aboutMe,
       },
       ServicesSection: {
         ...user.ServicesSection,
@@ -177,6 +177,8 @@ const Profile = () => {
       if (data.statusCode === 200) {
         toast.success('Profile updated successfully');
       } else {
+        console.log(data);
+        console.log(newUser);
         toast.error('Something went wrong');
       }
 
@@ -204,7 +206,9 @@ const Profile = () => {
             setSelectedBanner={setSelectedBanner}
           />
           <ShareProfile memberId={user.MemberId} />
-          <AboutMeSection aboutMe={aboutMe} setAboutMe={setAboutMe} />
+          {aboutMe && (
+            <AboutMeSection aboutMe={aboutMe} setAboutMe={setAboutMe} />
+          )}
           <HelpSection services={services} setServices={setServices} />
           <ContactSection
             phone={phone}
@@ -220,6 +224,9 @@ const Profile = () => {
             workExperience={workExperience}
             setWorkExperience={setWorkExperience}
           />
+          {activity && (
+            <ActivitySection activity={activity} isExternal={false} />
+          )}
           <PrimaryButton type="submit" loading={loading} onClick={handleSubmit}>
             Save changes
           </PrimaryButton>

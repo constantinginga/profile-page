@@ -1,11 +1,13 @@
 import { FC, ReactNode, createContext, useState, useEffect } from 'react';
 import { UserData } from '../types/userData';
+import { Activity } from '../types/activity';
 import { toast } from 'react-hot-toast';
 
 type UserContextType = {
   user: UserData | null;
   token: string | null;
   completionScore: number;
+  activity: Activity | null;
   setCompletionScore: (score: number) => void;
   setUser: (user: UserData) => void;
   calculateCompletionScore: (user: UserData) => number;
@@ -19,6 +21,7 @@ export const UserContext = createContext<UserContextType>({
   user: null,
   token: null,
   completionScore: 0,
+  activity: null,
   setCompletionScore: () => {},
   setUser: () => {},
   calculateCompletionScore: () => 0,
@@ -26,6 +29,7 @@ export const UserContext = createContext<UserContextType>({
 
 export const UserProvider: FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<UserData | null>(null);
+  const [activity, setActivity] = useState<Activity | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [completionScore, setCompletionScore] = useState<number>(0);
 
@@ -36,14 +40,16 @@ export const UserProvider: FC<UserProviderProps> = ({ children }) => {
       );
       const data = await response.json();
 
+      console.log(data);
+
       if (data.StatusCode) {
         toast.error('Something went wrong');
       } else {
-        const fetchedUser = data as UserData;
+        const fetchedUser = data.member as UserData;
 
         setUser(fetchedUser);
 
-        console.log(fetchedUser);
+        setActivity(data.activitySection as Activity);
 
         setCompletionScore(calculateCompletionScore(fetchedUser));
       }
@@ -98,6 +104,7 @@ export const UserProvider: FC<UserProviderProps> = ({ children }) => {
         user,
         token,
         completionScore,
+        activity,
         setCompletionScore,
         setUser,
         calculateCompletionScore,
