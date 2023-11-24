@@ -11,6 +11,7 @@ type UserContextType = {
   setCompletionScore: (score: number) => void;
   setUser: (user: UserData) => void;
   calculateCompletionScore: (user: UserData) => number;
+  setActivity: (activity: Activity) => void;
 };
 
 type UserProviderProps = {
@@ -25,6 +26,7 @@ export const UserContext = createContext<UserContextType>({
   setCompletionScore: () => {},
   setUser: () => {},
   calculateCompletionScore: () => 0,
+  setActivity: () => {},
 });
 
 export const UserProvider: FC<UserProviderProps> = ({ children }) => {
@@ -108,6 +110,7 @@ export const UserProvider: FC<UserProviderProps> = ({ children }) => {
         setCompletionScore,
         setUser,
         calculateCompletionScore,
+        setActivity,
       }}>
       {children}
     </UserContext.Provider>

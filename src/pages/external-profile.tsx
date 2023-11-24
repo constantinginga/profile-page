@@ -43,15 +43,20 @@ const ExternalProfile = () => {
             image={user.Image}
             connectedId={user.MemberId}
           />
-          {user.DescriptionSection && user.DescriptionSection.Content && (
-            <ExternalDescriptionSection
-              description={user.DescriptionSection.Content}
-            />
-          )}
-          {user.ServicesSection && user.ServicesSection.Content && (
-            <ServicesSection services={user.ServicesSection.Content} />
-          )}
+          {user.DescriptionSection &&
+            user.DescriptionSection.PrivacySetting &&
+            user.DescriptionSection.Content && (
+              <ExternalDescriptionSection
+                description={user.DescriptionSection.Content}
+              />
+            )}
+          {user.ServicesSection &&
+            user.ServicesSection.PrivacySetting &&
+            user.ServicesSection.Content && (
+              <ServicesSection services={user.ServicesSection.Content} />
+            )}
           {user.ContactsSection &&
+            user.ContactsSection.PrivacySetting &&
             (user.ContactsSection.Email ||
               user.ContactsSection.PhoneNumber) && (
               <ExternalContactSection
@@ -60,19 +65,21 @@ const ExternalProfile = () => {
               />
             )}
           {user.ExternalLinksSection &&
+            user.ExternalLinksSection.PrivacySetting &&
             user.ExternalLinksSection.ExternalLinks.length > 0 && (
               <PublicLinksSection
                 externalLinks={user.ExternalLinksSection.ExternalLinks}
               />
             )}
           {user.WorkExperienceSection &&
+            user.WorkExperienceSection.PrivacySetting &&
             user.WorkExperienceSection.WorkExperiences.length > 0 && (
               <ExternalWorkExperienceSection
                 workExperience={user.WorkExperienceSection.WorkExperiences}
               />
             )}
 
-          {activity && (
+          {activity && activity.PrivacySetting && (
             <ActivitySection activity={activity} isExternal={true} />
           )}
         </div>

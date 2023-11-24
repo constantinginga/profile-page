@@ -1,12 +1,12 @@
 import { useState, FC, useContext, FormEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { WorkExperience } from '../../types/userData';
+import { WorkExperience, TWorkExperienceSection } from '../../types/userData';
 import { UserContext } from '../../context/UserContext';
 import { toast } from 'react-hot-toast';
 
 type WorkExperienceSectionProps = {
-  workExperience: WorkExperience[];
-  setWorkExperience: (workExperience: WorkExperience[]) => void;
+  workExperience: TWorkExperienceSection;
+  setWorkExperience: (workExperience: TWorkExperienceSection) => void;
 };
 
 type TFormFields = {
@@ -81,7 +81,10 @@ const WorkExperienceSection: FC<WorkExperienceSectionProps> = ({
       EndDate: endDate ? endDate : null,
     };
 
-    setWorkExperience([...workExperience, newWorkExperience]);
+    setWorkExperience({
+      ...workExperience,
+      WorkExperiences: [...workExperience.WorkExperiences, newWorkExperience],
+    });
 
     toast.success('Successfully added. Please save your changes.');
 
@@ -96,11 +99,14 @@ const WorkExperienceSection: FC<WorkExperienceSectionProps> = ({
 
     if (!result) return;
 
-    const newWorkExperience = workExperience.filter(
+    const newWorkExperience = workExperience.WorkExperiences.filter(
       (exp) => exp.WorkExperienceId !== experience.WorkExperienceId
     );
 
-    setWorkExperience(newWorkExperience);
+    setWorkExperience({
+      ...workExperience,
+      WorkExperiences: newWorkExperience,
+    });
 
     toast.success('Successfully removed. Please save your changes.', {
       duration: 5000,
@@ -151,15 +157,20 @@ const WorkExperienceSection: FC<WorkExperienceSectionProps> = ({
       EndDate: endDate ? endDate : null,
     };
 
-    const newWorkExperienceList = workExperience.map((experience) => {
-      if (experience.WorkExperienceId === selectedWorkExperienceId) {
-        return newWorkExperience;
+    const newWorkExperienceList = workExperience.WorkExperiences.map(
+      (experience) => {
+        if (experience.WorkExperienceId === selectedWorkExperienceId) {
+          return newWorkExperience;
+        }
+
+        return experience;
       }
+    );
 
-      return experience;
+    setWorkExperience({
+      ...workExperience,
+      WorkExperiences: newWorkExperienceList,
     });
-
-    setWorkExperience(newWorkExperienceList);
 
     toast.success('Successfully updated. Please save your changes.');
 
@@ -167,18 +178,39 @@ const WorkExperienceSection: FC<WorkExperienceSectionProps> = ({
     setFormFields(defaultFormFields);
   };
 
+  const handlePrivacyChange = () => {
+    setWorkExperience({
+      ...workExperience,
+      PrivacySetting: !workExperience.PrivacySetting,
+    });
+  };
+
   return (
     <section className="flex flex-col gap-4">
       <div className="flex justify-between items-center">
-        <h2 className="font-bold text-lg">Work experience</h2>
-        <button
-          className="btn btn-sm btn-primary btn-outline w-fit my-4"
-          onClick={openModal}>
-          + New work experience
-        </button>
+        <div className="flex gap-2 items-center">
+          <h2 className="font-bold text-lg">Work experience</h2>
+          <button
+            className="btn btn-sm btn-primary btn-outline w-fit my-4"
+            onClick={openModal}>
+            + New
+          </button>
+        </div>
+
+        <div className="form-control">
+          <label className="label cursor-pointer gap-2">
+            <span className="label-text">Is public</span>
+            <input
+              type="checkbox"
+              className="toggle"
+              checked={workExperience.PrivacySetting}
+              onChange={handlePrivacyChange}
+            />
+          </label>
+        </div>
       </div>
       <div className="flex flex-col gap-6">
-        {workExperience.map((experience, index) => (
+        {workExperience.WorkExperiences.map((experience, index) => (
           <div
             className="flex flex-col gap-2 bg-base-200 p-4 rounded-xl shadow-xl"
             key={index}>

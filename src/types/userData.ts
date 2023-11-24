@@ -8,8 +8,14 @@ export type UserData = {
   DescriptionSection: DescriptionSection;
   ContactsSection: ContactsSection;
   ServicesSection: ServicesSection;
-  WorkExperienceSection: WorkExperienceSection;
-  ExternalLinksSection: ExternalLinksSection;
+  WorkExperienceSection: TWorkExperienceSection;
+  ExternalLinksSection: TExternalLinksSection;
+  ActivitySection: ActivitySection;
+};
+
+export type ActivitySection = {
+  MemberId: number;
+  PrivacySetting: boolean;
 };
 
 export type DescriptionSection = {
@@ -26,7 +32,7 @@ export type ContactsSection = {
   PrivacySetting: boolean;
 };
 
-export type WorkExperienceSection = {
+export type TWorkExperienceSection = {
   MemberId: number;
   PrivacySetting: boolean;
   WorkExperiences: WorkExperience[];
@@ -42,7 +48,7 @@ export type WorkExperience = {
   PositionDescription: string;
 };
 
-export type ExternalLinksSection = {
+export type TExternalLinksSection = {
   MemberId: number;
   PrivacySetting: boolean;
   ExternalLinks: ExternalLink[];

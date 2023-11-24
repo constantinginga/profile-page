@@ -4,8 +4,13 @@ import { UserContext } from '../context/UserContext';
 import { Toaster, toast } from 'react-hot-toast';
 
 import { ResponseType } from '../types/responseType';
-import { WorkExperience, ExternalLink } from '../types/userData';
-import { DescriptionSection } from '../types/userData';
+import {
+  TExternalLinksSection,
+  TWorkExperienceSection,
+  DescriptionSection,
+  ServicesSection,
+  ContactsSection,
+} from '../types/userData';
 
 import PrimaryButton from '../components/primary-button';
 import AboutMeSection from '../sections/profile/about-me-section';
@@ -26,15 +31,17 @@ const Profile = () => {
     token,
     calculateCompletionScore,
     setCompletionScore,
+    setActivity,
   } = useContext(UserContext);
 
   const [name, setName] = useState('');
   const [aboutMe, setAboutMe] = useState<DescriptionSection | null>(null);
-  const [services, setServices] = useState('');
-  const [phone, setPhone] = useState('');
-  const [contactEmail, setContactEmail] = useState('');
-  const [workExperience, setWorkExperience] = useState<WorkExperience[]>([]);
-  const [externalLinks, setExternalLinks] = useState<ExternalLink[]>([]);
+  const [services, setServices] = useState<ServicesSection | null>(null);
+  const [contact, setContact] = useState<ContactsSection | null>(null);
+  const [workExperience, setWorkExperience] =
+    useState<TWorkExperienceSection | null>(null);
+  const [externalLinks, setExternalLinks] =
+    useState<TExternalLinksSection | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedBanner, setSelectedBanner] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>('');
@@ -58,16 +65,15 @@ const Profile = () => {
     setImageUrl(user.Image ? user.Image : '');
     setBannerUrl(user.Banner ? user.Banner : '');
     setAboutMe(user.DescriptionSection ? user.DescriptionSection : null);
-    setServices(user.ServicesSection ? user.ServicesSection.Content : '');
-    setPhone(user.ContactsSection ? user.ContactsSection.PhoneNumber : '');
-    setContactEmail(user.ContactsSection ? user.ContactsSection.Email : '');
+    setServices(user.ServicesSection ? user.ServicesSection : null);
+    // setPhone(user.ContactsSection ? user.ContactsSection.PhoneNumber : '');
+    // setContactEmail(user.ContactsSection ? user.ContactsSection.Email : '');
+    setContact(user.ContactsSection ? user.ContactsSection : null);
     setWorkExperience(
-      user.WorkExperienceSection
-        ? user.WorkExperienceSection.WorkExperiences
-        : []
+      user.WorkExperienceSection ? user.WorkExperienceSection : null
     );
     setExternalLinks(
-      user.ExternalLinksSection ? user.ExternalLinksSection.ExternalLinks : []
+      user.ExternalLinksSection ? user.ExternalLinksSection : null
     );
   }, [user]);
 
@@ -142,20 +148,25 @@ const Profile = () => {
       },
       ServicesSection: {
         ...user.ServicesSection,
-        Content: services,
+        ...services,
       },
       ContactsSection: {
         ...user.ContactsSection,
-        PhoneNumber: phone,
-        Email: contactEmail,
+        ...contact,
       },
       WorkExperienceSection: {
         ...user.WorkExperienceSection,
-        WorkExperiences: workExperience,
+        ...workExperience,
       },
       ExternalLinksSection: {
         ...user.ExternalLinksSection,
-        ExternalLinks: externalLinks,
+        ...externalLinks,
+      },
+      ActivitySection: {
+        ...user.ActivitySection,
+        PrivacySetting: activity
+          ? activity.PrivacySetting
+          : user.ActivitySection.PrivacySetting,
       },
       Image: imageData ? imageData.publicUrl : '',
       Banner: bannerData ? bannerData.publicUrl : '',
@@ -209,23 +220,30 @@ const Profile = () => {
           {aboutMe && (
             <AboutMeSection aboutMe={aboutMe} setAboutMe={setAboutMe} />
           )}
-          <HelpSection services={services} setServices={setServices} />
-          <ContactSection
-            phone={phone}
-            setPhone={setPhone}
-            contactEmail={contactEmail}
-            setContactEmail={setContactEmail}
-          />
-          <ExternalLinksSection
-            externalLinks={externalLinks}
-            setExternalLinks={setExternalLinks}
-          />
-          <WorkExperienceSection
-            workExperience={workExperience}
-            setWorkExperience={setWorkExperience}
-          />
+          {services && (
+            <HelpSection services={services} setServices={setServices} />
+          )}
+          {contact && (
+            <ContactSection contact={contact} setContact={setContact} />
+          )}
+          {externalLinks && (
+            <ExternalLinksSection
+              externalLinks={externalLinks}
+              setExternalLinks={setExternalLinks}
+            />
+          )}
+          {workExperience && (
+            <WorkExperienceSection
+              workExperience={workExperience}
+              setWorkExperience={setWorkExperience}
+            />
+          )}
           {activity && (
-            <ActivitySection activity={activity} isExternal={false} />
+            <ActivitySection
+              activity={activity}
+              setActivity={setActivity}
+              isExternal={false}
+            />
           )}
           <PrimaryButton type="submit" loading={loading} onClick={handleSubmit}>
             Save changes

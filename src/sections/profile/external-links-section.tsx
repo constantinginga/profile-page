@@ -1,12 +1,12 @@
 import { useState, useContext, FC, FormEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { UserContext } from '../../context/UserContext';
-import { ExternalLink } from '../../types/userData';
+import { ExternalLink, TExternalLinksSection } from '../../types/userData';
 import { toast } from 'react-hot-toast';
 
 type ExternalLinkProps = {
-  externalLinks: ExternalLink[];
-  setExternalLinks: (externalLinks: ExternalLink[]) => void;
+  externalLinks: TExternalLinksSection;
+  setExternalLinks: (externalLinks: TExternalLinksSection) => void;
 };
 
 type TFormFields = {
@@ -63,7 +63,10 @@ const ExternalLinksSection: FC<ExternalLinkProps> = ({
       Url: url,
     };
 
-    setExternalLinks([...externalLinks, newExternalLink]);
+    setExternalLinks({
+      ...externalLinks,
+      ExternalLinks: [...externalLinks.ExternalLinks, newExternalLink],
+    });
 
     toast.success('Successfully added. Please save your changes.');
 
@@ -91,7 +94,7 @@ const ExternalLinksSection: FC<ExternalLinkProps> = ({
       Url: url,
     };
 
-    const newExternalLinkList = externalLinks.map((link) => {
+    const newExternalLinkList = externalLinks.ExternalLinks.map((link) => {
       if (link.ExternalLinkId === selectedExternalLinkId) {
         return newExternalLink;
       }
@@ -99,7 +102,10 @@ const ExternalLinksSection: FC<ExternalLinkProps> = ({
       return link;
     });
 
-    setExternalLinks(newExternalLinkList);
+    setExternalLinks({
+      ...externalLinks,
+      ExternalLinks: newExternalLinkList,
+    });
 
     toast.success('Successfully updated. Please save your changes.');
 
@@ -114,11 +120,14 @@ const ExternalLinksSection: FC<ExternalLinkProps> = ({
 
     if (!result) return;
 
-    const newExternalLinks = externalLinks.filter(
+    const newExternalLinks = externalLinks.ExternalLinks.filter(
       (l) => l.ExternalLinkId !== link.ExternalLinkId
     );
 
-    setExternalLinks(newExternalLinks);
+    setExternalLinks({
+      ...externalLinks,
+      ExternalLinks: newExternalLinks,
+    });
 
     toast.success('Successfully removed. Please save your changes.', {
       duration: 5000,
@@ -136,17 +145,38 @@ const ExternalLinksSection: FC<ExternalLinkProps> = ({
     window.new_external_link.showModal();
   };
 
+  const handlePrivacyChange = () => {
+    setExternalLinks({
+      ...externalLinks,
+      PrivacySetting: !externalLinks.PrivacySetting,
+    });
+  };
+
   return (
     <section className="flex flex-col gap-4 flex-1">
       <div className="flex justify-between items-center">
-        <h2 className="font-bold text-lg">External links</h2>
-        <button
-          className="btn btn-sm btn-primary btn-outline w-fit my-4"
-          onClick={openModal}>
-          + New external link
-        </button>
+        <div className="flex gap-2 items-center">
+          <h2 className="font-bold text-lg">External links</h2>
+          <button
+            className="btn btn-sm btn-primary btn-outline w-fit my-4"
+            onClick={openModal}>
+            + New
+          </button>
+        </div>
+
+        <div className="form-control">
+          <label className="label cursor-pointer gap-2">
+            <span className="label-text">Is public</span>
+            <input
+              type="checkbox"
+              className="toggle"
+              checked={externalLinks.PrivacySetting}
+              onChange={handlePrivacyChange}
+            />
+          </label>
+        </div>
       </div>
-      {externalLinks.map((link, index) => (
+      {externalLinks.ExternalLinks.map((link, index) => (
         <div key={index} className="flex items-end gap-4">
           <a
             className="link w-fit"

@@ -3,16 +3,42 @@ import { Activity } from '../../types/activity';
 
 type ActivitySectionProps = {
   activity: Activity;
+  setActivity?: (activity: Activity) => void;
   isExternal: boolean;
 };
 
 const ActivitySection: FC<ActivitySectionProps> = ({
   activity,
   isExternal,
+  setActivity,
 }) => {
+  const handlePrivacyChange = () => {
+    if (!setActivity) return;
+
+    setActivity({
+      ...activity,
+      PrivacySetting: !activity.PrivacySetting,
+    });
+  };
+
   return (
     <section className="flex flex-col gap-4 flex-1">
-      <h2 className="font-bold text-lg">Activity</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="font-bold text-lg">Activity</h2>
+        {!isExternal && (
+          <div className="form-control">
+            <label className="label cursor-pointer gap-2">
+              <span className="label-text">Is public</span>
+              <input
+                type="checkbox"
+                className="toggle"
+                checked={activity.PrivacySetting}
+                onChange={handlePrivacyChange}
+              />
+            </label>
+          </div>
+        )}
+      </div>
 
       <div className="flex flex-col">
         <h3 className="font-semibold">Overall</h3>
