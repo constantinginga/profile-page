@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { UserData } from '../types/userData';
+import { Connection } from '../types/connection';
 import { Activity } from '../types/activity';
 import ExternalDescriptionSection from '../sections/external-profile/description-section';
 import ExternalBasicInfoSection from '../sections/external-profile/basic-info-section';
@@ -16,22 +17,81 @@ const ExternalProfile = () => {
 
   const [user, setUser] = useState<UserData | null>(null);
   const [activity, setActivity] = useState<Activity | null>(null);
+  const [isMember, setIsMember] = useState<boolean>(false);
+  const [connection, setConnection] = useState<Connection | null>(null);
+  const params = new URLSearchParams(window.location.search);
+  const memberId = params.get('memberId');
+  const token = params.get('token');
 
   useEffect(() => {
     if (!id) return;
 
     async function fetchProfile() {
+      console.log(id, memberId, token);
+
       const response = await fetch(
-        `https://localhost:7297/Profiles/GetExternalProfile?memberId=${id}`
+        !isMember
+          ? `https://localhost:7297/Profiles/GetExternalProfile?memberIdToView=${id}`
+          : `https://localhost:7297/Profiles/GetExternalProfile?memberIdToView=${id}&authId=${memberId}&token=${token}`
       );
       const data = await response.json();
+
+      console.log(data);
 
       setUser(data.member as UserData);
       setActivity(data.activitySection as Activity);
     }
 
     fetchProfile();
-  }, [id]);
+  }, [id, memberId, token, isMember]);
+
+  useEffect(() => {
+    if (!memberId || !token) {
+      return;
+    }
+
+    async function checkToken() {
+      const response = await fetch(
+        `https://localhost:7297/Profiles/CheckToken?memberId=${memberId}&token=${token}`
+      );
+      const data = await response.json();
+
+      if (data.statusCode === 200) {
+        setIsMember(true);
+      }
+    }
+
+    checkToken();
+  }, [memberId, token]);
+
+  useEffect(() => {
+    async function checkConnection() {
+      if (!memberId || !token || !user?.MemberId) return;
+
+      const connection = {
+        MemberId: +memberId,
+        ConnectedId: user.MemberId,
+      } as Connection;
+
+      const response = await fetch(
+        `https://localhost:7297/Profiles/CheckMemberConnection?memberId=${memberId}&token=${token}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          method: 'POST',
+          body: JSON.stringify(connection),
+        }
+      );
+      const data = await response.json();
+
+      console.log(data);
+
+      setConnection(data);
+    }
+
+    checkConnection();
+  }, [isMember, memberId, token, user?.MemberId]);
 
   return (
     user && (
@@ -42,21 +102,19 @@ const ExternalProfile = () => {
             banner={user.Banner}
             image={user.Image}
             connectedId={user.MemberId}
+            isMember={isMember}
+            connection={connection}
+            setConnection={setConnection}
           />
-          {user.DescriptionSection &&
-            user.DescriptionSection.PrivacySetting &&
-            user.DescriptionSection.Content && (
-              <ExternalDescriptionSection
-                description={user.DescriptionSection.Content}
-              />
-            )}
-          {user.ServicesSection &&
-            user.ServicesSection.PrivacySetting &&
-            user.ServicesSection.Content && (
-              <ServicesSection services={user.ServicesSection.Content} />
-            )}
+          {user.DescriptionSection && user.DescriptionSection.Content && (
+            <ExternalDescriptionSection
+              description={user.DescriptionSection.Content}
+            />
+          )}
+          {user.ServicesSection && user.ServicesSection.Content && (
+            <ServicesSection services={user.ServicesSection.Content} />
+          )}
           {user.ContactsSection &&
-            user.ContactsSection.PrivacySetting &&
             (user.ContactsSection.Email ||
               user.ContactsSection.PhoneNumber) && (
               <ExternalContactSection
@@ -65,21 +123,19 @@ const ExternalProfile = () => {
               />
             )}
           {user.ExternalLinksSection &&
-            user.ExternalLinksSection.PrivacySetting &&
             user.ExternalLinksSection.ExternalLinks.length > 0 && (
               <PublicLinksSection
                 externalLinks={user.ExternalLinksSection.ExternalLinks}
               />
             )}
           {user.WorkExperienceSection &&
-            user.WorkExperienceSection.PrivacySetting &&
             user.WorkExperienceSection.WorkExperiences.length > 0 && (
               <ExternalWorkExperienceSection
                 workExperience={user.WorkExperienceSection.WorkExperiences}
               />
             )}
 
-          {activity && activity.PrivacySetting && (
+          {activity && (
             <ActivitySection activity={activity} isExternal={true} />
           )}
         </div>

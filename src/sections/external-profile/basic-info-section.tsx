@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { Connection } from '../../types/connection';
 import { toast } from 'react-hot-toast';
 
@@ -9,6 +9,9 @@ type ExternalBasicInfoSectionProps = {
   image: string | null;
   name: string | null;
   connectedId: number;
+  isMember: boolean;
+  connection: Connection | null;
+  setConnection: (connection: Connection | null) => void;
 };
 
 const ExternalBasicInfoSection: FC<ExternalBasicInfoSectionProps> = ({
@@ -16,63 +19,15 @@ const ExternalBasicInfoSection: FC<ExternalBasicInfoSectionProps> = ({
   image,
   name,
   connectedId,
+  isMember,
+  connection,
+  setConnection,
 }) => {
-  const [isMember, setIsMember] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const params = new URLSearchParams(window.location.search);
   const memberId = params.get('memberId');
   const token = params.get('token');
-
-  useEffect(() => {
-    if (!memberId || !token) {
-      setIsMember(false);
-      return;
-    }
-
-    async function checkToken() {
-      const response = await fetch(
-        `https://localhost:7297/Profiles/CheckToken?memberId=${memberId}&token=${token}`
-      );
-      const data = await response.json();
-
-      setIsMember(data.statusCode === 200 ? true : false);
-    }
-
-    checkToken();
-  }, [memberId, token]);
-
-  useEffect(() => {
-    async function checkConnection() {
-      if (!memberId || !token || !connectedId) return;
-
-      const connection = {
-        MemberId: +memberId,
-        ConnectedId: connectedId,
-      } as Connection;
-
-      const response = await fetch(
-        `https://localhost:7297/Profiles/CheckMemberConnection?memberId=${memberId}&token=${token}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          method: 'POST',
-          body: JSON.stringify(connection),
-        }
-      );
-      const data = await response.json();
-
-      if (data.StatusCode) {
-        setIsConnected(false);
-      } else {
-        setIsConnected(true);
-      }
-    }
-
-    checkConnection();
-  }, [isMember, memberId, token, connectedId]);
 
   const handleConnect = async () => {
     if (!memberId || !token) return;
@@ -98,7 +53,7 @@ const ExternalBasicInfoSection: FC<ExternalBasicInfoSectionProps> = ({
     const data = await response.json();
 
     if (data.StatusCode === 200) {
-      setIsConnected(true);
+      setConnection(connection);
       toast.success('Connection request sent!', {
         duration: 3000,
       });
@@ -134,12 +89,16 @@ const ExternalBasicInfoSection: FC<ExternalBasicInfoSectionProps> = ({
               </div>
             )}
             {isMember &&
-              (isConnected ? (
-                <button
-                  className="btn btn-primary mr-4 !bg-gray-400 !text-black"
-                  disabled>
-                  Connection sent
-                </button>
+              (connection ? (
+                !connection.Status ? (
+                  <button
+                    className="btn btn-primary mr-4 !bg-gray-400 !text-black"
+                    disabled>
+                    Connection sent
+                  </button>
+                ) : (
+                  <></>
+                )
               ) : (
                 <PrimaryButton
                   type="submit"
