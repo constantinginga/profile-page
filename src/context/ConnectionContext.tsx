@@ -56,15 +56,15 @@ export const ConnectionProvider: FC<ConnectionProviderProps> = ({
 
     for (const connection of fetchedConnections) {
       const profileResponse = await fetch(
-        `https://localhost:7297/Profiles/GetExternalProfile?memberId=${connection.MemberId}`
+        `https://localhost:7297/Profiles/GetExternalProfile?memberIdToView=${connection.MemberId}`
       );
 
       const profileData = await profileResponse.json();
 
       const connectionWithProfile: ConnectionWithProfile = {
         connection,
-        Name: profileData.Name,
-        Image: profileData.Image,
+        Name: profileData.member.Name,
+        Image: profileData.member.Image,
       };
 
       connections.push(connectionWithProfile);
@@ -84,15 +84,15 @@ export const ConnectionProvider: FC<ConnectionProviderProps> = ({
     const connections: ConnectionWithProfile[] = [];
     for (const connection of fetchedConnections) {
       const profileResponse = await fetch(
-        `https://localhost:7297/Profiles/GetExternalProfile?memberId=${connection.MemberId}`
+        `https://localhost:7297/Profiles/GetExternalProfile?memberIdToView=${connection.MemberId}`
       );
 
       const profileData = await profileResponse.json();
 
       const connectionWithProfile: ConnectionWithProfile = {
         connection,
-        Name: profileData.Name,
-        Image: profileData.Image,
+        Name: profileData.member.Name,
+        Image: profileData.member.Image,
       };
 
       connections.push(connectionWithProfile);
@@ -116,8 +116,6 @@ export const ConnectionProvider: FC<ConnectionProviderProps> = ({
       }
     );
     const data = await response.json();
-
-    console.log(data);
 
     if (data.StatusCode === 200) {
       setRequests((prev) =>

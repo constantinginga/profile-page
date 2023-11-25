@@ -13,7 +13,7 @@ const Connections = () => {
   return (
     <div className="flex flex-col max-w-4xl mx-auto my-12 gap-2">
       <div className="flex flex-col gap-6 w-fit">
-        <ul className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box gap-2">
+        <ul className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box gap-2 w-fit">
           <li onClick={() => setIsRequestsTab('connections')}>
             <a className={`${isRequestsTab === 'connections' ? 'active' : ''}`}>
               Connections
@@ -33,7 +33,7 @@ const Connections = () => {
             </a>
           </li>
         </ul>
-        <div>
+        <div className="flex gap-4">
           {isRequestsTab === 'connections' ? (
             connections.map((connection, i) => (
               <ConnectionCard request={connection} isRequest={false} key={i} />
