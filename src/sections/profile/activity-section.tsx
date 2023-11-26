@@ -21,6 +21,8 @@ const ActivitySection: FC<ActivitySectionProps> = ({
     });
   };
 
+  console.log(activity);
+
   return (
     <section className="flex flex-col gap-4 flex-1">
       <div className="flex items-center justify-between">

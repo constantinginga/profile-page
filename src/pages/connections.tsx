@@ -43,7 +43,7 @@ const Connections = () => {
               <ConnectionCard request={request} isRequest={true} key={i} />
             ))
           ) : (
-            <FindConnections />
+            <FindConnections isMember={true} />
           )}
         </div>
       </div>

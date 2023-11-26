@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import Profile from './pages/profile';
 import ExternalProfile from './pages/external-profile';
 import Connections from './pages/connections';
+import Users from './pages/users';
 import { UserProvider } from './context/UserContext';
 import { ConnectionProvider } from './context/ConnectionContext';
 
@@ -32,6 +33,7 @@ function App() {
           </ConnectionProvider>
         }
       />
+      <Route path="users" element={<Users />} />
     </Routes>
   );
 }
