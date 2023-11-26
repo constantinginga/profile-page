@@ -64,4 +64,5 @@ export type ExternalLink = {
 export type MinimalUserData = {
   Id: number;
   Name: string | null;
+  isFreeUser: boolean;
 };
