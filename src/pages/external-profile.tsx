@@ -27,8 +27,6 @@ const ExternalProfile = () => {
     if (!id) return;
 
     async function fetchProfile() {
-      console.log(id, memberId, token);
-
       const response = await fetch(
         !isMember
           ? `https://localhost:7297/Profiles/GetExternalProfile?memberIdToView=${id}`
@@ -36,9 +34,10 @@ const ExternalProfile = () => {
       );
       const data = await response.json();
 
+      setUser(data.member as UserData);
+
       console.log(data);
 
-      setUser(data.member as UserData);
       setActivity(data.activitySection as Activity);
     }
 
