@@ -6,10 +6,15 @@ import { ContactsSection } from '../../types/userData';
 
 type ContactSectionProps = {
   contact: ContactsSection;
+  isApproved: boolean;
   setContact: (contact: ContactsSection) => void;
 };
 
-const ContactSection: FC<ContactSectionProps> = ({ contact, setContact }) => {
+const ContactSection: FC<ContactSectionProps> = ({
+  contact,
+  isApproved,
+  setContact,
+}) => {
   const handleEmailChange = (event: React.FormEvent<HTMLInputElement>) => {
     setContact({
       ...contact,
@@ -35,17 +40,19 @@ const ContactSection: FC<ContactSectionProps> = ({ contact, setContact }) => {
     <section className="flex flex-col gap-4 flex-1">
       <div className="flex items-center justify-between">
         <h2 className="font-bold text-lg">Contact information</h2>
-        <div className="form-control">
-          <label className="label cursor-pointer gap-2">
-            <span className="label-text">Is public</span>
-            <input
-              type="checkbox"
-              className="toggle"
-              checked={contact.PrivacySetting}
-              onChange={handlePrivacyChange}
-            />
-          </label>
-        </div>
+        {isApproved && (
+          <div className="form-control">
+            <label className="label cursor-pointer gap-2">
+              <span className="label-text">Is public</span>
+              <input
+                type="checkbox"
+                className="toggle"
+                checked={contact.PrivacySetting}
+                onChange={handlePrivacyChange}
+              />
+            </label>
+          </div>
+        )}
       </div>
       <div className="flex flex-col gap-2">
         <input

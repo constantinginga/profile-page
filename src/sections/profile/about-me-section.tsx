@@ -4,10 +4,15 @@ import TextArea from '../../components/text-area';
 
 type AboutMeSectionProps = {
   aboutMe: DescriptionSection;
+  isApproved: boolean;
   setAboutMe: (aboutMe: DescriptionSection) => void;
 };
 
-const AboutMeSection: FC<AboutMeSectionProps> = ({ aboutMe, setAboutMe }) => {
+const AboutMeSection: FC<AboutMeSectionProps> = ({
+  aboutMe,
+  isApproved,
+  setAboutMe,
+}) => {
   const handleChange = (event: FormEvent<HTMLTextAreaElement>) => {
     setAboutMe({
       ...aboutMe,
@@ -26,17 +31,19 @@ const AboutMeSection: FC<AboutMeSectionProps> = ({ aboutMe, setAboutMe }) => {
     <section className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h2 className="font-bold text-lg">About me</h2>
-        <div className="form-control">
-          <label className="label cursor-pointer gap-2">
-            <span className="label-text">Is public</span>
-            <input
-              type="checkbox"
-              className="toggle"
-              checked={aboutMe.PrivacySetting}
-              onChange={handlePrivacyChange}
-            />
-          </label>
-        </div>
+        {isApproved && (
+          <div className="form-control">
+            <label className="label cursor-pointer gap-2">
+              <span className="label-text">Is public</span>
+              <input
+                type="checkbox"
+                className="toggle"
+                checked={aboutMe.PrivacySetting}
+                onChange={handlePrivacyChange}
+              />
+            </label>
+          </div>
+        )}
       </div>
       <TextArea
         value={aboutMe.Content}

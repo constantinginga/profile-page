@@ -5,11 +5,13 @@ type ActivitySectionProps = {
   activity: Activity;
   setActivity?: (activity: Activity) => void;
   isExternal: boolean;
+  isApproved: boolean;
 };
 
 const ActivitySection: FC<ActivitySectionProps> = ({
   activity,
   isExternal,
+  isApproved,
   setActivity,
 }) => {
   const handlePrivacyChange = () => {
@@ -27,7 +29,7 @@ const ActivitySection: FC<ActivitySectionProps> = ({
     <section className="flex flex-col gap-4 flex-1">
       <div className="flex items-center justify-between">
         <h2 className="font-bold text-lg">Activity</h2>
-        {!isExternal && (
+        {!isExternal && isApproved && (
           <div className="form-control">
             <label className="label cursor-pointer gap-2">
               <span className="label-text">Is public</span>

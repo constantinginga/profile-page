@@ -29,6 +29,7 @@ const Profile = () => {
     user,
     activity,
     token,
+    isApproved,
     calculateCompletionScore,
     setCompletionScore,
     setActivity,
@@ -218,13 +219,25 @@ const Profile = () => {
           />
           <ShareProfile memberId={user.MemberId} />
           {aboutMe && (
-            <AboutMeSection aboutMe={aboutMe} setAboutMe={setAboutMe} />
+            <AboutMeSection
+              aboutMe={aboutMe}
+              setAboutMe={setAboutMe}
+              isApproved={isApproved}
+            />
           )}
           {services && (
-            <HelpSection services={services} setServices={setServices} />
+            <HelpSection
+              services={services}
+              setServices={setServices}
+              isApproved={isApproved}
+            />
           )}
           {contact && (
-            <ContactSection contact={contact} setContact={setContact} />
+            <ContactSection
+              contact={contact}
+              setContact={setContact}
+              isApproved={isApproved}
+            />
           )}
           {externalLinks && (
             <ExternalLinksSection
@@ -242,6 +255,7 @@ const Profile = () => {
             <ActivitySection
               activity={activity}
               setActivity={setActivity}
+              isApproved={isApproved}
               isExternal={false}
             />
           )}

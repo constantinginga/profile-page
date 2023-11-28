@@ -1,5 +1,4 @@
 import { useState, useContext, FC, FormEvent } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { UserContext } from '../../context/UserContext';
 import { ExternalLink, TExternalLinksSection } from '../../types/userData';
 import { toast } from 'react-hot-toast';
@@ -23,10 +22,10 @@ const ExternalLinksSection: FC<ExternalLinkProps> = ({
   externalLinks,
   setExternalLinks,
 }) => {
-  const { user } = useContext(UserContext);
+  const { user, isApproved } = useContext(UserContext);
   const [formFields, setFormFields] = useState<TFormFields>(defaultFormFields);
   const [selectedExternalLinkId, setSelectedExternalLinkId] = useState<
-    number|null
+    number | null
   >(null);
   const { title, url } = formFields;
 
@@ -138,8 +137,7 @@ const ExternalLinksSection: FC<ExternalLinkProps> = ({
       title: link.Title,
       url: link.Url,
     });
-    if(link.ExternalLinkId)
-    setSelectedExternalLinkId(link.ExternalLinkId);
+    if (link.ExternalLinkId) setSelectedExternalLinkId(link.ExternalLinkId);
 
     window.new_external_link.showModal();
   };
@@ -163,17 +161,19 @@ const ExternalLinksSection: FC<ExternalLinkProps> = ({
           </button>
         </div>
 
-        <div className="form-control">
-          <label className="label cursor-pointer gap-2">
-            <span className="label-text">Is public</span>
-            <input
-              type="checkbox"
-              className="toggle"
-              checked={externalLinks.PrivacySetting}
-              onChange={handlePrivacyChange}
-            />
-          </label>
-        </div>
+        {isApproved && (
+          <div className="form-control">
+            <label className="label cursor-pointer gap-2">
+              <span className="label-text">Is public</span>
+              <input
+                type="checkbox"
+                className="toggle"
+                checked={externalLinks.PrivacySetting}
+                onChange={handlePrivacyChange}
+              />
+            </label>
+          </div>
+        )}
       </div>
       {externalLinks.ExternalLinks.map((link, index) => (
         <div key={index} className="flex items-end gap-4">

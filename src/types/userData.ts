@@ -5,12 +5,20 @@ export type UserData = {
   Image: string | null;
   Banner: string | null;
   Email: string;
+  Json: string;
   DescriptionSection: DescriptionSection;
   ContactsSection: ContactsSection;
   ServicesSection: ServicesSection;
   WorkExperienceSection: TWorkExperienceSection;
   ExternalLinksSection: TExternalLinksSection;
   ActivitySection: ActivitySection;
+};
+
+export type UserJson = {
+  IsApproved: boolean;
+  Alias: string;
+  Avatar: string;
+  IsAdmin: true;
 };
 
 export type ActivitySection = {

@@ -1,5 +1,4 @@
 import { useState, FC, useContext, FormEvent } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { WorkExperience, TWorkExperienceSection } from '../../types/userData';
 import { UserContext } from '../../context/UserContext';
 import { toast } from 'react-hot-toast';
@@ -29,10 +28,10 @@ const WorkExperienceSection: FC<WorkExperienceSectionProps> = ({
   workExperience,
   setWorkExperience,
 }) => {
-  const { user } = useContext(UserContext);
+  const { user, isApproved } = useContext(UserContext);
   const [formFields, setFormFields] = useState<TFormFields>(defaultFormFields);
   const [selectedWorkExperienceId, setSelectedWorkExperienceId] = useState<
-    number|null
+    number | null
   >(null);
   const { companyName, position, positionDescription, startDate, endDate } =
     formFields;
@@ -121,8 +120,8 @@ const WorkExperienceSection: FC<WorkExperienceSectionProps> = ({
       startDate: experience.StartDate.split('T')[0],
       endDate: experience.EndDate ? experience.EndDate.split('T')[0] : '',
     });
-    if(experience.WorkExperienceId)
-    setSelectedWorkExperienceId(experience.WorkExperienceId);
+    if (experience.WorkExperienceId)
+      setSelectedWorkExperienceId(experience.WorkExperienceId);
 
     window.new_work_experience.showModal();
   };
@@ -196,17 +195,19 @@ const WorkExperienceSection: FC<WorkExperienceSectionProps> = ({
           </button>
         </div>
 
-        <div className="form-control">
-          <label className="label cursor-pointer gap-2">
-            <span className="label-text">Is public</span>
-            <input
-              type="checkbox"
-              className="toggle"
-              checked={workExperience.PrivacySetting}
-              onChange={handlePrivacyChange}
-            />
-          </label>
-        </div>
+        {isApproved && (
+          <div className="form-control">
+            <label className="label cursor-pointer gap-2">
+              <span className="label-text">Is public</span>
+              <input
+                type="checkbox"
+                className="toggle"
+                checked={workExperience.PrivacySetting}
+                onChange={handlePrivacyChange}
+              />
+            </label>
+          </div>
+        )}
       </div>
       <div className="flex flex-col gap-6">
         {workExperience.WorkExperiences.map((experience, index) => (

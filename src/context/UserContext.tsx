@@ -1,5 +1,5 @@
 import { FC, ReactNode, createContext, useState, useEffect } from 'react';
-import { UserData } from '../types/userData';
+import { UserData, UserJson } from '../types/userData';
 import { Activity } from '../types/activity';
 import { toast } from 'react-hot-toast';
 
@@ -8,6 +8,7 @@ type UserContextType = {
   token: string | null;
   completionScore: number;
   activity: Activity | null;
+  isApproved: boolean;
   setCompletionScore: (score: number) => void;
   setUser: (user: UserData) => void;
   calculateCompletionScore: (user: UserData) => number;
@@ -23,6 +24,7 @@ export const UserContext = createContext<UserContextType>({
   token: null,
   completionScore: 0,
   activity: null,
+  isApproved: false,
   setCompletionScore: () => {},
   setUser: () => {},
   calculateCompletionScore: () => 0,
@@ -31,6 +33,7 @@ export const UserContext = createContext<UserContextType>({
 
 export const UserProvider: FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<UserData | null>(null);
+  const [isApproved, setIsApproved] = useState<boolean>(false);
   const [activity, setActivity] = useState<Activity | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [completionScore, setCompletionScore] = useState<number>(0);
@@ -50,6 +53,10 @@ export const UserProvider: FC<UserProviderProps> = ({ children }) => {
         const fetchedUser = data.member as UserData;
 
         setUser(fetchedUser);
+
+        const userJson: UserJson = JSON.parse(fetchedUser.Json);
+
+        setIsApproved(userJson.IsApproved);
 
         setActivity(data.activitySection as Activity);
 
@@ -107,6 +114,7 @@ export const UserProvider: FC<UserProviderProps> = ({ children }) => {
         token,
         completionScore,
         activity,
+        isApproved,
         setCompletionScore,
         setUser,
         calculateCompletionScore,

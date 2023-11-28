@@ -4,10 +4,15 @@ import TextArea from '../../components/text-area';
 
 type HelpSectionProps = {
   services: ServicesSection;
+  isApproved: boolean;
   setServices: (services: ServicesSection) => void;
 };
 
-const HelpSection: FC<HelpSectionProps> = ({ services, setServices }) => {
+const HelpSection: FC<HelpSectionProps> = ({
+  services,
+  isApproved,
+  setServices,
+}) => {
   const handleChange = (event: FormEvent<HTMLTextAreaElement>) => {
     setServices({
       ...services,
@@ -26,17 +31,19 @@ const HelpSection: FC<HelpSectionProps> = ({ services, setServices }) => {
     <section className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h2 className="font-bold text-lg">What can I help you with?</h2>
-        <div className="form-control">
-          <label className="label cursor-pointer gap-2">
-            <span className="label-text">Is public</span>
-            <input
-              type="checkbox"
-              className="toggle"
-              checked={services.PrivacySetting}
-              onChange={handlePrivacyChange}
-            />
-          </label>
-        </div>
+        {isApproved && (
+          <div className="form-control">
+            <label className="label cursor-pointer gap-2">
+              <span className="label-text">Is public</span>
+              <input
+                type="checkbox"
+                className="toggle"
+                checked={services.PrivacySetting}
+                onChange={handlePrivacyChange}
+              />
+            </label>
+          </div>
+        )}
       </div>
       <TextArea
         value={services.Content}
