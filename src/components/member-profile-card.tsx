@@ -54,7 +54,7 @@ const MemberProfileCard = ({ user }: { user: MinimalUserData }) => {
           <h2 className="card-title underline break-all">{user.Name}</h2>
         </Link>
         <div className="card-actions">
-          {!isConnected && !user.isFreeUser ? (
+          {!isConnected && user.isFreeUser ? (
             <button className="btn btn-primary" onClick={handleConnect}>
               {isLoading && (
                 <span className="loading loading-spinner">Connect</span>
@@ -62,7 +62,7 @@ const MemberProfileCard = ({ user }: { user: MinimalUserData }) => {
               + Connect
             </button>
           ) : (
-            !user.isFreeUser && (
+            user.isFreeUser && (
               <button className="btn btn-primary" disabled>
                 Request sent
               </button>
