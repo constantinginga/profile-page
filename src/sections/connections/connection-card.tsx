@@ -10,6 +10,9 @@ type ConnectionCardProps = {
 
 const ConnectionCard: FC<ConnectionCardProps> = ({ request, isRequest }) => {
   const { acceptRequest, declineRequest } = useContext(ConnectionContext);
+  const params = new URLSearchParams(window.location.search);
+  const memberId = params.get('memberId');
+  const token = params.get('token');
   return (
     <div className="card card-compact w-56 bg-base-100 shadow-xl">
       <figure className="px-10 pt-10">
@@ -30,7 +33,7 @@ const ConnectionCard: FC<ConnectionCardProps> = ({ request, isRequest }) => {
       </figure>
       <div className="card-body items-center text-center">
         <Link
-          to={`http://localhost:5173/external-profile/${request.connection.MemberId}`}
+          to={isRequest ? `http://localhost:5173/external-profile/${request.connection.MemberId}` : `http://localhost:5173/external-profile/${request.connection.MemberId}?memberId=${memberId}&token=${token}`}
           target="_blank">
           <h2 className="card-title underline">{request.Name}</h2>
         </Link>
