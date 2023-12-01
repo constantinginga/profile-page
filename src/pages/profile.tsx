@@ -1,9 +1,6 @@
 import { useEffect, useState, useContext } from 'react';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { UserContext } from '../context/UserContext';
-import { Toaster, toast } from 'react-hot-toast';
-
-import { ResponseType } from '../types/responseType';
+import { Toaster } from 'react-hot-toast';
 import {
   TExternalLinksSection,
   TWorkExperienceSection,
@@ -23,15 +20,14 @@ import ExternalLinksSection from '../sections/profile/external-links-section';
 import ActivitySection from '../sections/profile/activity-section';
 
 const Profile = () => {
-  const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
   const [loading, setLoading] = useState(false);
   const {
     user,
+    updateProfile,
     activity,
-    token,
+    setImage,
+    setBanner,
     isApproved,
-    calculateCompletionScore,
-    setCompletionScore,
     setActivity,
   } = useContext(UserContext);
 
@@ -47,17 +43,6 @@ const Profile = () => {
   const [selectedBanner, setSelectedBanner] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>('');
   const [bannerUrl, setBannerUrl] = useState<string | null>('');
-
-  useEffect(() => {
-    if (supabase === null) {
-      const client = createClient(
-        process.env.SUPABASE_URL as string,
-        process.env.SUPABASE_SECRET_KEY as string
-      );
-
-      setSupabase(client);
-    }
-  }, [supabase]);
 
   useEffect(() => {
     if (!user) return;
@@ -81,63 +66,14 @@ const Profile = () => {
   const handleSubmit = async () => {
     setLoading(true);
 
-    if (!user || !supabase) return;
+    if (!user) return;
 
     if (selectedImage) {
-      // try replacing avatar if it already exists in bucket
-      const { error: replaceError } = await supabase.storage
-        .from('avatars')
-        .update(`${user.MemberId}`, selectedImage, {
-          upsert: true,
-          cacheControl: '1',
-        });
-
-      if (replaceError) {
-        // if avatar doesn't exist in bucket, upload it
-        const { error } = await supabase.storage
-          .from('avatars')
-          .upload(`${user.MemberId}`, selectedImage);
-
-        if (error) {
-          console.log('upload ERROR: ', error);
-        }
-      }
-    }
-
-    const { data: imageData } = supabase.storage
-      .from('avatars')
-      .getPublicUrl(`${user.MemberId}`);
-
-    if (imageData) {
-      setImageUrl(imageData.publicUrl);
+      setImage(selectedImage);
     }
 
     if (selectedBanner) {
-      const { error: replaceError } = await supabase.storage
-        .from('banners')
-        .update(`${user.MemberId}`, selectedBanner, {
-          upsert: true,
-          cacheControl: '1',
-        });
-
-      if (replaceError) {
-        // if avatar doesn't exist in bucket, upload it
-        const { error } = await supabase.storage
-          .from('banners')
-          .upload(`${user.MemberId}`, selectedBanner);
-
-        if (error) {
-          console.log('upload ERROR: ', error);
-        }
-      }
-    }
-
-    const { data: bannerData } = supabase.storage
-      .from('banners')
-      .getPublicUrl(`${user.MemberId}`);
-
-    if (bannerData) {
-      setBannerUrl(bannerData.publicUrl);
+      setBanner(selectedBanner);
     }
 
     const newUser = {
@@ -169,36 +105,9 @@ const Profile = () => {
           ? activity.PrivacySetting
           : user.ActivitySection.PrivacySetting,
       },
-      Image: imageData ? imageData.publicUrl : '',
-      Banner: bannerData ? bannerData.publicUrl : '',
     };
 
-    try {
-      const response = await fetch(
-        `https://localhost:7297/Profiles/UpdateProfile?memberId=${user.MemberId}&token=${token}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newUser),
-        }
-      );
-      const data: ResponseType = await response.json();
-
-      if (data.statusCode === 200) {
-        toast.success('Profile updated successfully');
-      } else {
-        console.log(data);
-        console.log(newUser);
-        toast.error('Something went wrong');
-      }
-
-      setCompletionScore(calculateCompletionScore(newUser));
-    } catch (error) {
-      toast.error('Something went wrong');
-      console.log(error);
-    }
+    await updateProfile(newUser);
 
     setLoading(false);
   };

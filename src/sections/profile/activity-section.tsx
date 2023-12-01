@@ -5,7 +5,7 @@ type ActivitySectionProps = {
   activity: Activity;
   setActivity?: (activity: Activity) => void;
   isExternal: boolean;
-  isApproved: boolean;
+  isApproved?: boolean;
 };
 
 const ActivitySection: FC<ActivitySectionProps> = ({
