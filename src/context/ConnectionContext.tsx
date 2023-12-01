@@ -53,7 +53,7 @@ export const ConnectionProvider: FC<ConnectionProviderProps> = ({
 
     fetchConnections();
     fetchRequests();
-  }, [memberId, token]);
+  }, [memberId, token, supabase]);
 
   async function fetchConnections() {
     const response = await fetch(
@@ -169,10 +169,6 @@ export const ConnectionProvider: FC<ConnectionProviderProps> = ({
     const fetchedMember = profileData.member as UserData;
 
     if (supabase) {
-      const { data: bannerData } = supabase.storage
-        .from('banners')
-        .getPublicUrl(`${fetchedMember.MemberId}`);
-
       const { data: imageData } = supabase.storage
         .from('avatars')
         .getPublicUrl(`${fetchedMember.MemberId}`);
@@ -181,13 +177,6 @@ export const ConnectionProvider: FC<ConnectionProviderProps> = ({
         const response = await fetch(imageData.publicUrl);
         if (response.status === 200) {
           fetchedMember.Image = imageData.publicUrl;
-        }
-      }
-
-      if (bannerData) {
-        const response = await fetch(bannerData.publicUrl);
-        if (response.status === 200) {
-          fetchedMember.Banner = imageData.publicUrl;
         }
       }
     }
