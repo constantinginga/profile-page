@@ -8,8 +8,8 @@ type BasicInfoSectionProps = {
   imageUrl: string | null;
   bannerUrl: string | null;
   setName: (name: string) => void;
-  setSelectedImage: (image: File | null) => void;
-  setSelectedBanner: (banner: File | null) => void;
+  setSelectedImage: (image: File) => void;
+  setSelectedBanner: (banner: File) => void;
 };
 
 const BasicInfoSection: FC<BasicInfoSectionProps> = ({

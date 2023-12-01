@@ -39,8 +39,6 @@ const Profile = () => {
     useState<TWorkExperienceSection | null>(null);
   const [externalLinks, setExternalLinks] =
     useState<TExternalLinksSection | null>(null);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [selectedBanner, setSelectedBanner] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>('');
   const [bannerUrl, setBannerUrl] = useState<string | null>('');
 
@@ -68,13 +66,13 @@ const Profile = () => {
 
     if (!user) return;
 
-    if (selectedImage) {
-      setImage(selectedImage);
-    }
+    // if (selectedImage) {
+    //   setImage(selectedImage);
+    // }
 
-    if (selectedBanner) {
-      setBanner(selectedBanner);
-    }
+    // if (selectedBanner) {
+    //   setBanner(selectedBanner);
+    // }
 
     const newUser = {
       ...user,
@@ -122,9 +120,9 @@ const Profile = () => {
             setName={setName}
             email={user.Email}
             imageUrl={imageUrl}
-            setSelectedImage={setSelectedImage}
+            setSelectedImage={setImage}
             bannerUrl={bannerUrl}
-            setSelectedBanner={setSelectedBanner}
+            setSelectedBanner={setBanner}
           />
           <ShareProfile memberId={user.MemberId} />
           {aboutMe && (
