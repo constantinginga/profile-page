@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { UserData } from '../types/userData';
 import { Connection } from '../types/connection';
 import { Activity } from '../types/activity';
@@ -14,7 +15,7 @@ import ActivitySection from '../sections/profile/activity-section';
 
 const ExternalProfile = () => {
   const { id } = useParams();
-
+  const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
   const [user, setUser] = useState<UserData | null>(null);
   const [activity, setActivity] = useState<Activity | null>(null);
   const [isMember, setIsMember] = useState<boolean>(false);
@@ -22,6 +23,17 @@ const ExternalProfile = () => {
   const params = new URLSearchParams(window.location.search);
   const memberId = params.get('memberId');
   const token = params.get('token');
+
+  useEffect(() => {
+    if (supabase === null) {
+      const client = createClient(
+        process.env.SUPABASE_URL as string,
+        process.env.SUPABASE_SECRET_KEY as string
+      );
+
+      setSupabase(client);
+    }
+  }, [supabase]);
 
   useEffect(() => {
     if (!id) return;
@@ -34,15 +46,41 @@ const ExternalProfile = () => {
       );
       const data = await response.json();
 
-      setUser(data.member as UserData);
+      const fetchedUser = data.member as UserData;
 
-      console.log(data);
+      if (supabase) {
+        const { data: bannerData } = supabase.storage
+          .from('banners')
+          .getPublicUrl(`${fetchedUser.MemberId}`);
+
+        const { data: imageData } = supabase.storage
+          .from('avatars')
+          .getPublicUrl(`${fetchedUser.MemberId}`);
+
+        if (imageData) {
+          const response = await fetch(imageData.publicUrl);
+          if (response.status === 200) {
+            fetchedUser.Image = imageData.publicUrl;
+          }
+        }
+
+        if (bannerData) {
+          const response = await fetch(bannerData.publicUrl);
+          if (response.status === 200) {
+            fetchedUser.Banner = bannerData.publicUrl;
+          }
+        }
+      }
+
+      setUser(fetchedUser);
+
+      console.log(fetchedUser);
 
       setActivity(data.activitySection as Activity);
     }
 
     fetchProfile();
-  }, [id, memberId, token, isMember]);
+  }, [id, memberId, token, isMember, supabase]);
 
   useEffect(() => {
     if (!memberId || !token) {

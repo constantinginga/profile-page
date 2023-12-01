@@ -86,11 +86,17 @@ export const UserProvider: FC<UserProviderProps> = ({ children }) => {
             .getPublicUrl(`${fetchedUser.MemberId}`);
 
           if (imageData) {
-            fetchedUser.Image = imageData.publicUrl;
+            const response = await fetch(imageData.publicUrl);
+            if (response.status === 200) {
+              fetchedUser.Image = imageData.publicUrl;
+            }
           }
 
           if (bannerData) {
-            fetchedUser.Banner = bannerData.publicUrl;
+            const response = await fetch(bannerData.publicUrl);
+            if (response.status === 200) {
+              fetchedUser.Banner = bannerData.publicUrl;
+            }
           }
         }
 
@@ -205,7 +211,10 @@ export const UserProvider: FC<UserProviderProps> = ({ children }) => {
         .getPublicUrl(`${user.MemberId}`);
 
       if (bannerData) {
-        bannerUrl = bannerData.publicUrl;
+        const response = await fetch(bannerData.publicUrl);
+        if (response.status === 200) {
+          bannerUrl = bannerData.publicUrl;
+        }
       }
 
       const { data: imageData } = supabase.storage
@@ -213,7 +222,10 @@ export const UserProvider: FC<UserProviderProps> = ({ children }) => {
         .getPublicUrl(`${user.MemberId}`);
 
       if (imageData) {
-        imageUrl = imageData.publicUrl;
+        const response = await fetch(imageData.publicUrl);
+        if (response.status === 200) {
+          imageUrl = imageData.publicUrl;
+        }
       }
     }
 

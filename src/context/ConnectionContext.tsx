@@ -1,6 +1,8 @@
 import { FC, ReactNode, createContext, useState, useEffect } from 'react';
+import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { Connection, ConnectionWithProfile } from '../types/connection';
 import { toast } from 'react-hot-toast';
+import { UserData } from '../types/userData';
 
 type ConnectionContextType = {
   connections: ConnectionWithProfile[];
@@ -27,12 +29,24 @@ export const ConnectionContext = createContext<ConnectionContextType>({
 export const ConnectionProvider: FC<ConnectionProviderProps> = ({
   children,
 }) => {
+  const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
   const [connections, setConnections] = useState<ConnectionWithProfile[]>([]);
   const [requests, setRequests] = useState<ConnectionWithProfile[]>([]);
 
   const params = new URLSearchParams(window.location.search);
   const memberId = params.get('memberId');
   const token = params.get('token');
+
+  useEffect(() => {
+    if (supabase === null) {
+      const client = createClient(
+        process.env.SUPABASE_URL as string,
+        process.env.SUPABASE_SECRET_KEY as string
+      );
+
+      setSupabase(client);
+    }
+  }, [supabase]);
 
   useEffect(() => {
     if (!memberId || !token) return;
@@ -52,17 +66,7 @@ export const ConnectionProvider: FC<ConnectionProviderProps> = ({
     const connections: ConnectionWithProfile[] = [];
 
     for (const connection of fetchedConnections) {
-      const profileResponse = await fetch(
-        `https://localhost:7297/Profiles/GetExternalProfile?memberIdToView=${connection.MemberId}`
-      );
-
-      const profileData = await profileResponse.json();
-
-      const connectionWithProfile: ConnectionWithProfile = {
-        connection,
-        Name: profileData.member.Name,
-        Image: profileData.member.Image,
-      };
+      const connectionWithProfile = await getExternalProfile(connection);
 
       connections.push(connectionWithProfile);
     }
@@ -80,17 +84,7 @@ export const ConnectionProvider: FC<ConnectionProviderProps> = ({
 
     const connections: ConnectionWithProfile[] = [];
     for (const connection of fetchedConnections) {
-      const profileResponse = await fetch(
-        `https://localhost:7297/Profiles/GetExternalProfile?memberIdToView=${connection.MemberId}`
-      );
-
-      const profileData = await profileResponse.json();
-
-      const connectionWithProfile: ConnectionWithProfile = {
-        connection,
-        Name: profileData.member.Name,
-        Image: profileData.member.Image,
-      };
+      const connectionWithProfile = await getExternalProfile(connection);
 
       connections.push(connectionWithProfile);
     }
@@ -163,6 +157,48 @@ export const ConnectionProvider: FC<ConnectionProviderProps> = ({
     } else {
       toast.error('Something went wrong.');
     }
+  };
+
+  const getExternalProfile = async (connection: Connection) => {
+    const profileResponse = await fetch(
+      `https://localhost:7297/Profiles/GetExternalProfile?memberIdToView=${connection.MemberId}`
+    );
+
+    const profileData = await profileResponse.json();
+
+    const fetchedMember = profileData.member as UserData;
+
+    if (supabase) {
+      const { data: bannerData } = supabase.storage
+        .from('banners')
+        .getPublicUrl(`${fetchedMember.MemberId}`);
+
+      const { data: imageData } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(`${fetchedMember.MemberId}`);
+
+      if (imageData) {
+        const response = await fetch(imageData.publicUrl);
+        if (response.status === 200) {
+          fetchedMember.Image = imageData.publicUrl;
+        }
+      }
+
+      if (bannerData) {
+        const response = await fetch(bannerData.publicUrl);
+        if (response.status === 200) {
+          fetchedMember.Banner = imageData.publicUrl;
+        }
+      }
+    }
+
+    const connectionWithProfile: ConnectionWithProfile = {
+      connection,
+      Name: fetchedMember.Name as string,
+      Image: fetchedMember.Image as string,
+    };
+
+    return connectionWithProfile;
   };
 
   return (
